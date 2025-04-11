@@ -1,10 +1,8 @@
 import './index.css'
-
+import Router from './routes/Router.jsx';
 function App() {
   return (
-    <>
-      <h1 className='text-2xl bg-amber-600'>Hello</h1>
-    </>
+    <Router />
   )
 }
 
