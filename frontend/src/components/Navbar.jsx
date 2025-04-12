@@ -20,11 +20,11 @@ const Navbar = () => {
                         </button>
                     </div>
                     <div className="flex mx-auto gap-15">
-                        <Link to={'/'}>
+                        <Link to={'/students'}>
                             <img className="h-8 w-auto rounded-2xl" src="/public/img/logo.png" alt="Your Company" />
                         </Link>
                         <div className='max-sm:hidden'>
-                            <Link to={'/'} className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Students</Link>
+                            <Link to={'/students'} className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Students</Link>
                         </div>
                         <div className='max-sm:hidden'>
                             <Link to={'/subjects'} href="#" className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Subjects</Link>
