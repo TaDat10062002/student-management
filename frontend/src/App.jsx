@@ -1,8 +1,8 @@
 import './index.css'
-import Router from './routes/Router.jsx';
+import Routers from './routes/Router.jsx';
 function App() {
   return (
-    <Router />
+    <Routers />
   )
 }
 
