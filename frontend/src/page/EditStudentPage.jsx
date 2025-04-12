@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-const CreateStudentPage = () => {
+const EditStudentPage = () => {
     return (
         <>
             <Link to={'/students'} className='bg-blue-500 w-fit mt-5 ml-25 px-10 py-3 flex gap-2 rounded-md max-sm:mx-auto'>
@@ -11,18 +11,18 @@ const CreateStudentPage = () => {
                 Go back
             </Link>
             <form className="max-w-lg mx-auto mt-5 bg-blue-200 px-5 py-5 rounded-2xl">
-                <h1 className='text-2xl text-center font-semibold'>Create student page</h1>
+                <h1 className='text-2xl text-center font-semibold'>Edit student page</h1>
                 <div className="mb-5">
                     <label htmlFor="email" className="block text-sm font-medium dark:text-black">Student name</label>
-                    <input name='studentName' type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Student name" required />
+                    <input type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Student name" required />
                 </div>
                 <div className="mb-5">
                     <label htmlFor="email" className="block text-sm font-medium dark:text-black">Student age</label>
-                    <input name='studentAge' type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Student age" required />
+                    <input type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Student age" required />
                 </div>
                 <div>
                     <label for="countries" class="block text-sm font-medium text-gray-900 dark:text-black">Select grade</label>
-                    <select name='studentGrade' id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option selected>Choose a grade</option>
                         <option value="1">1</option>
                         <option value="1">2</option>
@@ -40,18 +40,18 @@ const CreateStudentPage = () => {
                 </div>
                 <div className='mt-5'>
                     <label for="countries" class="block text-sm font-medium text-gray-900 dark:text-black">Select an gender</label>
-                    <select name='studentGender' id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option selected>Choose a gender</option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                     </select>
                 </div>
                 <button type='submit' className=' w-fit block mx-auto font-medium bg-blue-500 px-25 py-2 mt-5 rounded-md'>
-                    Submit
+                    Save changes
                 </button>
             </form>
         </>
     )
 }
 
-export default CreateStudentPage
+export default EditStudentPage
