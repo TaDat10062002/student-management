@@ -24,6 +24,9 @@ const Navbar = () => {
                             <img className="h-8 w-auto rounded-2xl" src="/public/img/logo.png" alt="Your Company" />
                         </Link>
                         <div className='max-sm:hidden'>
+                            <Link to={'/teachers'} className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Teachers</Link>
+                        </div>
+                        <div className='max-sm:hidden'>
                             <Link to={'/students'} className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Students</Link>
                         </div>
                         <div className='max-sm:hidden'>

@@ -2,25 +2,35 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import WelcomePage from '../page/WelcomePage'
 import Dashboard from "../page/Dashboard";
 import Layout from "../components/Layout";
-import StudentPage from "../page/StudentPage";
-import SubjectPage from "../page/SubjectPage";
-import CoursePage from "../page/CoursePage";
-import CreateStudentPage from "../page/CreateStudentPage";
-import EditStudentPage from "../page/EditStudentPage";
-import CreateSubjectPage from "../page/CreateSubjectPage";
-import CreateCoursePage from "../page/CreateCoursePage";
-import EditCoursePage from "../page/EditCoursePage";
-import EditSubjectPage from "../page/EditSubjectPage";
-export default function Router() {
+import TeacherPage from "../page/Teacher/TeacherPage";
+import CreateTeacherPage from "../page/Teacher/CreateTeacherPage";
+import EditTeacherPage from "../page/Teacher/EditTeacherPage";
+import StudentPage from "../page/Student/StudentPage";
+import CreateStudentPage from "../page/Student/CreateStudentPage";
+import EditStudentPage from "../page/Student/EditStudentPage";
+import SubjectPage from "../page/Subject/SubjectPage";
+import CreateSubjectPage from "../page/Subject/CreateSubjectPage";
+import EditSubjectPage from "../page/Subject/EditSubjectPage";
+import CoursePage from "../page/Course/CoursePage";
+import CreateCoursePage from "../page/Course/CreateCoursePage";
+import EditCoursePage from "../page/Course/EditCoursePage";
 
+export default function Router() {
     return (
         <>
             <Routes>
                 <Route path="/" element={<Navigate to={'/welcome'} replace />} />
                 <Route path="/welcome" element={<WelcomePage />} />
                 <Route path="/" element={<Layout />}>
-                    <Route path="/courses" element={<CoursePage />} />
                     <Route path="/dashboard" element={<Dashboard />} />
+
+                    {/* teacher page  */}
+                    <Route path="/teachers" element={<TeacherPage />} />
+                    {/* teacher create  */}
+                    <Route path="/teachers/create" element={<CreateTeacherPage />} />
+                    {/* edit teacher page  */}
+                    <Route path="/teachers/edit" element={<EditTeacherPage />} />
+
                     {/*  student page */}
                     <Route path="/students" element={<StudentPage />} />
                     {/* create student page  */}
