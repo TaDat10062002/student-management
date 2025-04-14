@@ -1,15 +1,15 @@
 import React from 'react'
-import Pagination from '../components/Pagination'
 import { Link } from 'react-router-dom'
-import SubjectList from '../components/SubjectList'
-import SearchBar from '../components/SearchBar'
+import SearchBar from '../../components/SearchBar'
+import TeacherList from '../../components/TeacherList'
+import Pagination from '../../components/Pagination'
 
-const SubjectPage = () => {
+const TeacherPage = () => {
     return (
         <>
             <div className='grid grid-cols-6'>
                 <div className='md:col-span-3 max-md:col-span-6 max-md:mx-auto'>
-                    <Link to={'/subjects/create'} className='block ml-10 mt-5 bg-blue-500 rounded-md w-fit px-10 py-4 max-sm:mx-auto'>Add subject</Link>
+                    <Link to={'/teachers/create'} className='block ml-10 mt-5 bg-blue-500 rounded-md w-fit px-10 py-4 max-sm:mx-auto'>Add a teacher</Link>
                 </div>
                 <div className='md:col-span-3 max-md:col-span-6 max-md:mx-auto mt-5 ml-auto mr-10'>
                     <SearchBar />
@@ -20,31 +20,28 @@ const SubjectPage = () => {
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-white">
                         <tr>
                             <th scope="col" className="py-3">
-                                Subject id
+                                Teacher id
                             </th>
                             <th scope="col" className="py-3">
-                                Subject name
+                                Teacher name
                             </th>
                             <th scope="col" className="py-3">
-                                Subject credits
-                            </th>
-                            <th scope="col" className="py-3">
-                                Subject class available
+                                Subject
                             </th>
                             <th scope="col" className="py-3">
                                 Action
                             </th>
                         </tr>
                     </thead>
-                    <SubjectList />
+                    <TeacherList />
                 </table>
             </div>
             <div className='ml-11 mt-10 text-lg font-semibold'>
-                Amount of students: 4
+                Amount of teacher: 4
             </div>
             <Pagination />
         </>
     )
 }
 
-export default SubjectPage
+export default TeacherPage
