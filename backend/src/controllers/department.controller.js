@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Department from "../models/department.model.js";
+import Teacher from "../models/teacher.model.js";
 export const getDepartments = async (req, res) => {
     const { typeOfDepartment } = req.query;
     try {
@@ -130,7 +131,12 @@ export const deleteDepartment = async (req, res) => {
 
     try {
         // check if department has teacher joined 
-
+        const joinedTeachers = await Teacher.countDocuments({ departmentID: id });
+        if (joinedTeachers > 0) {
+            return res.status(400).json({
+                message: `Cannot delete department, This department now has ${joinedTeachers} teachers`
+            })
+        }
         await Department.findByIdAndDelete(id, { new: true });
         res.status(200).json({
             message: "Department has been deleted successfully"
