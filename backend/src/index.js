@@ -2,9 +2,7 @@ import express, { request } from "express";
 import dotenv from "dotenv";
 import cookieParser from 'cookie-parser';
 import { connectDB } from "./lib/db.js";
-import departmentRoute from "./routes/department.route.js";
-import teacherRoute from "./routes/teacher.route.js";
-import authRoute from "./routes/auth.route.js";
+// import authRoute from "./routes/auth.route.js";
 import adminRoute from "./routes/admin.route.js";
 dotenv.config();
 const PORT = process.env.PORT;
@@ -18,10 +16,10 @@ app.use(express.json());
 app.use(cookieParser());
 
 // apply routes
-app.use("/api/auth/", authRoute);
+// app.use("/api/auth/", authRoute);
 app.use("/api/admin/", adminRoute);
-app.use("/api/departments/", departmentRoute);
-app.use("/api/teachers/", teacherRoute);
+// app.use("/api/admin/", authRoute);
+
 app.listen(PORT, () => {
     connectDB(MONGODB_URI)
     console.log(`Server is running at http://localhost:${PORT}`)
