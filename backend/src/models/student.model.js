@@ -1,16 +1,16 @@
 import mongoose, { Schema } from "mongoose";
 import User from "./user.model.js";
 
-const teacherSchema = new mongoose.Schema({
+const studentSchema = new mongoose.Schema({
     age: {
         type: String,
         default: ''
     },
-    gender: {
+    class: {
         type: String,
         default: ''
     },
-    experience: {
+    gender: {
         type: String,
         default: ''
     },
@@ -20,5 +20,5 @@ const teacherSchema = new mongoose.Schema({
     }
 })
 
-const Teacher = User.discriminator("Teacher", teacherSchema);
-export default Teacher;
+const Student = User.discriminator("Student", studentSchema);
+export default Student;

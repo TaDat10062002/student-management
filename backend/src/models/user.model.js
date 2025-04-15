@@ -1,5 +1,9 @@
 import mongoose, { Schema } from "mongoose";
 
+const options = {
+    discriminatorKey: 'role', // trường dùng để phân biệt loại user; bạn có thể đổi tên, mặc định là 
+    collection: 'users'       // tên collection chứa tất cả các user
+}
 const userSchema = new mongoose.Schema({
     fullName: {
         type: String,
@@ -11,18 +15,8 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
         minLength: 6
-    },
-    role: {
-        type: String,
-        default: '0'
-    },
-    teacher: {
-        type: Schema.Types.ObjectId,
-        ref: "Teacher",
-        default: null
     }
-}, { timestamps: true })
+}, options, { timestamps: true })
 const User = mongoose.model("User", userSchema);
 export default User;
