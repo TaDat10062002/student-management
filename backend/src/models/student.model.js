@@ -16,7 +16,7 @@ const studentSchema = new mongoose.Schema({
     },
     departmentID: {
         type: Schema.Types.ObjectId,
-        default: ''
+        default: null
     }
 })
 

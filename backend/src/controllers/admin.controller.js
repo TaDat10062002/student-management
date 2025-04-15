@@ -1,5 +1,6 @@
 import { generateToken } from "../lib/utils.js";
 import Admin from "../models/admin.model.js";
+import Department from "../models/department.model.js";
 import Student from "../models/student.model.js";
 import Teacher from "../models/teacher.model.js";
 import User from "../models/user.model.js";
@@ -25,48 +26,86 @@ export const createUser = async (req, res) => {
 
         const salt = bcrypt.genSaltSync(10);
         const hashedPassword = bcrypt.hashSync(password, salt);
-        if (typeOfUser === 'admin') {
+
+        if (typeOfUser === "admin") {
             const newUser = new Admin({
                 fullName,
                 email,
-                password: hashedPassword,
+                password: hashedPassword
             })
-            console.log(newUser)
-            // const userId = newUser._id
-            // generateToken(userId, res)
-            // await newUser.save();
-            // return res.status(201).json({
-            //     message: `Created user with ${newUser.role} successfully`
-            // })
+            generateToken(newUser._id, res)
+            await newUser.save()
+            return res.status(201).json({
+                message: `Created user with ${newUser.role} successfully`
+            })
         }
-        else if (typeOfUser === 'teacher') {
+        else if (typeOfUser === "teacher") {
             const newUser = new Teacher({
                 fullName,
                 email,
-                password: hashedPassword,
+                password: hashedPassword
             })
-            console.log(newUser)
-            // const userId = newUser._id
-            // generateToken(userId, res)
-            // await newUser.save();
-            // return res.status(201).json({
-            //     message: `Created user with ${newUser.role} successfully`
-            // })
+            generateToken(newUser._id, res)
+            await newUser.save()
+            return res.status(201).json({
+                message: `Created user with ${newUser.role} successfully`
+            })
         }
-        else if (typeOfUser === 'student') {
+        else if (typeOfUser === "student") {
             const newUser = new Student({
                 fullName,
                 email,
-                password: hashedPassword,
+                password: hashedPassword
             })
-            console.log(newUser)
-            // const userId = newUser._id
-            // generateToken(userId, res)
-            // await newUser.save();
-            // res.status(201).json({
-            //     message: `Created user with ${newUser.role} successfully`
-            // })
+            generateToken(newUser._id, res)
+            await newUser.save()
+            return res.status(201).json({
+                message: `Created user with ${newUser.role} successfully`
+            })
         }
+    } catch (error) {
+        console.log(`Error createUser in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+export const updateUser = async (req, res) => {
+    try {
+
+    } catch (error) {
+
+    }
+}
+
+
+export const createDepartment = async (req, res) => {
+    const { name } = req.body;
+    try {
+        const department = await Department.findOne({ name: name });
+        if (department) {
+            return res.status(400).json({
+                message: "Department has already exist"
+            })
+        }
+        const newDepartment = new Department({ name })
+        await newDepartment.save();
+        res.status(201).json({
+            message: `${newDepartment.name} has been created successfully`
+        })
+    } catch (error) {
+        console.log(`Error createDepartment in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+export const updateDepartment = async (req, res) => {
+    const { id } = req.params;
+    try {
+
     } catch (error) {
 
     }
