@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import User from "./user.model.js";
 
 const teacherSchema = new mongoose.Schema({
-    age: {
+    dob: {
         type: String,
         default: ''
     },
