@@ -2,6 +2,7 @@ import { generateToken } from "../lib/utils.js";
 import Admin from "../models/admin.model.js";
 import Department from "../models/department.model.js";
 import Student from "../models/student.model.js";
+import Subject from "../models/subject.model.js";
 import Teacher from "../models/teacher.model.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
@@ -71,17 +72,45 @@ export const createUser = async (req, res) => {
     }
 }
 
-export const updateUser = async (req, res) => {
+// todo
+export const updateAdmin = async (req, res) => {
+    const { id } = req.params;
+    const { fullName, password, role } = req.body;
     try {
+        const user = await User.findByIdAndUpdate(id, {
 
+        })
     } catch (error) {
 
     }
 }
 
+export const updateTeacher = async (req, res) => {
+    const { id } = req.params;
+    const { fullName, password, role, gender, experience, departmentID, dob } = req.body;
+    try {
+        const user = await User.findByIdAndUpdate(id, {
+
+        })
+    } catch (error) {
+
+    }
+}
+
+export const updateStudent = async (req, res) => {
+    const { id } = req.params;
+    const { fullName, password, role, Class, departmentID, dob } = req.body;
+    try {
+        const user = await User.findByIdAndUpdate(id, {
+
+        })
+    } catch (error) {
+
+    }
+}
 
 export const createDepartment = async (req, res) => {
-    const { name } = req.body;
+    const { name, departmentType } = req.body;
     try {
         const department = await Department.findOne({ name: name });
         if (department) {
@@ -89,10 +118,10 @@ export const createDepartment = async (req, res) => {
                 message: "Department has already exist"
             })
         }
-        const newDepartment = new Department({ name })
+        const newDepartment = new Department({ name, departmentType })
         await newDepartment.save();
         res.status(201).json({
-            message: `${newDepartment.name} has been created successfully`
+            message: `${newDepartment.name} department has been created successfully`
         })
     } catch (error) {
         console.log(`Error createDepartment in controller ${error.message}`);
@@ -104,9 +133,99 @@ export const createDepartment = async (req, res) => {
 
 export const updateDepartment = async (req, res) => {
     const { id } = req.params;
+    const { name, departmentType } = req.body;
     try {
+        const upadatedDepartment = await Department.findByIdAndUpdate(id, {
+            name,
+            departmentType
+        }, { new: true }).select(["-createdAt", "-updatedAt"]);
+
+        if (!upadatedDepartment) {
+            return res.startus(400).json({
+                message: "Update department failed!!!"
+            })
+        }
+        res.status(200).json({
+            message: `Update department successfully`,
+            upadatedDepartment
+        })
+    } catch (error) {
+        console.log(`Error updateDepartment in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+// todo
+export const deleteDepartment = async (req, res) => {
+
+}
+
+export const createSubject = async (req, res) => {
+    const { name, number_of_credits } = req.body;
+    try {
+        if (!name || !number_of_credits) {
+            return res.startus(400).json({
+                message: "All fields are required"
+            })
+        }
+
+        const subject = await Subject.findOne({ name: name });
+        if (subject) {
+            return res.status(400).json({
+                message: `${name} subject is existed`
+            })
+        }
+
+        const newSubject = new Subject({
+            name,
+            number_of_credits
+        })
+
+        await newSubject.save();
+        res.status(201).json({
+            message: `Subject ${name} is created successfully`,
+            newSubject
+        })
+    } catch (error) {
+        console.log(`Error createSubject in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+export const updateSubject = async (req, res) => {
+    const { id } = req.params;
+    const { name, number_of_credits } = req.body;
+    try {
+        const updatedSubject = await Subject.findByIdAndUpdate(id,
+            {
+                name: name,
+                number_of_credits: number_of_credits
+            }, { new: true })
+
+        if (updatedSubject.errors === undefined) {
+            return res.status(404).json({
+                message: "Subject not found"
+            })
+        }
+
+        res.status(200).json({
+            message: `Subject ${updatedSubject.name} has been updated successfully`,
+            updatedSubject
+        })
 
     } catch (error) {
-
+        console.log(`Error updateSubject in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
     }
+}
+
+// todo
+export const deleteSubject = async (req, res) => {
+
 }
