@@ -4,7 +4,7 @@ import { protectedRoute, requireAdmin } from "../middleware/auth.middleware.js";
 const routers = express.Router();
 
 routers.post('/user/:typeOfUser', protectedRoute, requireAdmin, createUser);
-routers.put('/admin/:id/edit', protectedRoute, requireAdmin, updateAdmin);
+routers.put('/:id/edit', protectedRoute, requireAdmin, updateAdmin);
 routers.put('/teacher/:id/edit', protectedRoute, requireAdmin, updateTeacher);
 routers.put('/student/:id/edit', protectedRoute, requireAdmin, updateStudent);
 

@@ -76,9 +76,23 @@ export const updateAdmin = async (req, res) => {
     const { id } = req.params;
     const { fullName, password, role } = req.body;
     try {
-        const user = await User.findByIdAndUpdate(id, {
+        const updatedUser = await User.findByIdAndUpdate(id, {
+            fullName: fullName,
+            password: password,
+            role: role
+        }, { overwriteDiscriminatorKey: true, new: true })
 
+        if (!updatedUser) {
+            return res.status(400).json({
+                message: "Update Admin failed"
+            })
+        }
+
+        res.status(200).json({
+            message: "Update Admin successfully",
+            updatedUser
         })
+
     } catch (error) {
         console.log(`Error updateTeacher in controller ${error.message}`);
         res.status(500).json({
@@ -132,12 +146,7 @@ export const updateStudent = async (req, res) => {
             gender: gender,
             departmentID: departmentID,
             dob
-        },
-            {
-                overwriteDiscriminatorKey: true,
-                new: true
-            }
-        )
+        }, { overwriteDiscriminatorKey: true, new: true })
 
         if (!updatedUser) {
             return res.status(400).json({
