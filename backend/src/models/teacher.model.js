@@ -16,8 +16,9 @@ const teacherSchema = new mongoose.Schema({
     },
     departmentID: {
         type: Schema.Types.ObjectId,
+        ref: "Department",
         default: null
     }
 })
-const Teacher = User.discriminator("Teacher", teacherSchema);
+const Teacher = User.discriminator("teacher", teacherSchema);
 export default Teacher;

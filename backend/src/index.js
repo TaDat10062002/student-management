@@ -4,7 +4,6 @@ import cookieParser from 'cookie-parser';
 import { connectDB } from "./lib/db.js";
 import authRoute from "./routes/auth.route.js";
 import adminRoute from "./routes/admin.route.js";
-import departmentRoute from './routes/department.route.js';
 
 dotenv.config();
 const PORT = process.env.PORT;
@@ -20,7 +19,6 @@ app.use(cookieParser());
 // apply routes
 app.use("/api/admin/", adminRoute);
 app.use("/api/auth/", authRoute);
-app.use("/api/department/", departmentRoute);
 
 app.listen(PORT, () => {
     connectDB(MONGODB_URI)

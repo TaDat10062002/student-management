@@ -11,10 +11,11 @@ const studentSchema = new mongoose.Schema({
         default: ''
     },
     departmentID: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Department",
         default: null
     }
 })
 
-const Student = User.discriminator("Student", studentSchema);
+const Student = User.discriminator("student", studentSchema);
 export default Student;
