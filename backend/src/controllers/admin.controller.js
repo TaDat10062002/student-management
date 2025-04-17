@@ -7,6 +7,7 @@ import Teacher from "../models/teacher.model.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 
+// user
 export const createUser = async (req, res) => {
     const { fullName, email, password } = req.body;
     const { typeOfUser } = req.params;
@@ -72,101 +73,42 @@ export const createUser = async (req, res) => {
     }
 }
 
-export const updateAdmin = async (req, res) => {
-    const { id } = req.params;
-    const { fullName, password, role } = req.body;
-    try {
-        const updatedUser = await User.findByIdAndUpdate(id, {
-            fullName: fullName,
-            password: password,
-            role: role
-        }, { overwriteDiscriminatorKey: true, new: true })
-
-        if (!updatedUser) {
-            return res.status(400).json({
-                message: "Update Admin failed"
-            })
-        }
-
-        res.status(200).json({
-            message: "Update Admin successfully",
-            updatedUser
-        })
-
-    } catch (error) {
-        console.log(`Error updateTeacher in controller ${error.message}`);
-        res.status(500).json({
-            message: "Internal Server Error"
-        })
-    }
-}
-
-export const updateTeacher = async (req, res) => {
-    const { id } = req.params;
+export const updateUser = async (req, res) => {
+    const { id: userID } = req.params;
     const { fullName, password, role, gender, experience, departmentID, dob } = req.body;
     try {
-        // phai chon user vi no co cai key role
-        const updatedUser = await User.findByIdAndUpdate(id, {
+        const updatedUser = await User.findByIdAndUpdate(userID, {
             fullName: fullName,
             password: password,
             role: role,
             gender: gender,
-            experience: `${experience} years`,
+            experience: experience,
             departmentID: departmentID,
             dob: dob,
         }, { overwriteDiscriminatorKey: true, new: true })
 
-        if (!updatedUser) {
+        if (!updateUser) {
             return res.status(400).json({
-                message: "Updated teacher failed",
-            })
-        }
-
-        return res.status(200).json({
-            message: "Update teacher successfully",
-            updatedUser
-        })
-
-    } catch (error) {
-        console.log(`Error updateTeacher in controller ${error.message}`);
-        res.status(500).json({
-            message: "Internal Server Error"
-        })
-    }
-}
-
-export const updateStudent = async (req, res) => {
-    const { id } = req.params;
-    const { fullName, password, role, gender, departmentID, dob } = req.body;
-    try {
-        const updatedUser = await User.findByIdAndUpdate(id, {
-            fullName: fullName,
-            password: password,
-            role: role,
-            gender: gender,
-            departmentID: departmentID,
-            dob
-        }, { overwriteDiscriminatorKey: true, new: true })
-
-        if (!updatedUser) {
-            return res.status(400).json({
-                message: "Update student failed"
+                message: "Updated user failed"
             })
         }
 
         res.status(200).json({
-            message: "Update student successfully",
+            message: `Updated user successfully with role is ${updatedUser.role}`,
             updatedUser
         })
 
     } catch (error) {
-        console.log(`Error updateStudent in controller ${error.message}`);
+        console.log(`Error updateUser in controller ${error.message}`)
         res.status(500).json({
             message: "Internal Server Error"
         })
     }
 }
 
+
+
+// department 
 export const createDepartment = async (req, res) => {
     const { name, departmentType } = req.body;
     try {
@@ -220,6 +162,7 @@ export const deleteDepartment = async (req, res) => {
 
 }
 
+// subject 
 export const createSubject = async (req, res) => {
     const { name, number_of_credits } = req.body;
     try {
