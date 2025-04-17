@@ -6,10 +6,6 @@ const studentSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
-    Class: {
-        type: String,
-        default: ''
-    },
     gender: {
         type: String,
         default: ''

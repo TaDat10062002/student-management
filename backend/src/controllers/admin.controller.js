@@ -72,7 +72,6 @@ export const createUser = async (req, res) => {
     }
 }
 
-// todo
 export const updateAdmin = async (req, res) => {
     const { id } = req.params;
     const { fullName, password, role } = req.body;
@@ -113,6 +112,7 @@ export const updateTeacher = async (req, res) => {
             message: "Update teacher successfully",
             updatedUser
         })
+
     } catch (error) {
         console.log(`Error updateTeacher in controller ${error.message}`);
         res.status(500).json({
@@ -123,13 +123,38 @@ export const updateTeacher = async (req, res) => {
 
 export const updateStudent = async (req, res) => {
     const { id } = req.params;
-    const { fullName, password, role, Class, departmentID, dob } = req.body;
+    const { fullName, password, role, gender, departmentID, dob } = req.body;
     try {
-        const user = await User.findByIdAndUpdate(id, {
+        const updatedUser = await User.findByIdAndUpdate(id, {
+            fullName: fullName,
+            password: password,
+            role: role,
+            gender: gender,
+            departmentID: departmentID,
+            dob
+        },
+            {
+                overwriteDiscriminatorKey: true,
+                new: true
+            }
+        )
 
+        if (!updatedUser) {
+            return res.status(400).json({
+                message: "Update student failed"
+            })
+        }
+
+        res.status(200).json({
+            message: "Update student successfully",
+            updatedUser
         })
-    } catch (error) {
 
+    } catch (error) {
+        console.log(`Error updateStudent in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
     }
 }
 
