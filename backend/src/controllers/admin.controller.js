@@ -1,4 +1,4 @@
-import { generateToken } from "../lib/utils.js";
+import mongoose from "mongoose";
 import Admin from "../models/admin.model.js";
 import Department from "../models/department.model.js";
 import Student from "../models/student.model.js";
@@ -8,9 +8,47 @@ import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 
 // user
+export const getUsers = async (req, res) => {
+    const role = req.query.role || '';
+    const departmentID = req.query.departmentID || '';
+    try {
+        const users = await User.find().select("-password");
+        if (users.length === 0) {
+            return res.status(404).json({
+                message: "No user was found!!!"
+            })
+        }
+
+        // role department
+
+        // role
+        if (role) {
+            const users = await User.find({ role: role })
+            return res.status(200).json({
+                users,
+                amount: users.length
+            })
+        }
+
+        // department
+
+
+
+        res.status(200).json({
+            users,
+            amount: users.length
+        })
+    } catch (error) {
+        console.log(`Error getUsers in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
 export const createUser = async (req, res) => {
     const { fullName, email, password } = req.body;
-    const { typeOfUser } = req.params;
+    const { createUser } = req.params;
     try {
         // validate data
         if (!fullName || !email || !password) {
@@ -28,38 +66,34 @@ export const createUser = async (req, res) => {
 
         const salt = bcrypt.genSaltSync(10);
         const hashedPassword = bcrypt.hashSync(password, salt);
-
-        if (typeOfUser === "admin") {
+        if (createUser === "admin") {
             const newUser = new Admin({
                 fullName,
                 email,
                 password: hashedPassword
             })
-            generateToken(newUser._id, res)
             await newUser.save()
             return res.status(201).json({
                 message: `Created user with ${newUser.role} successfully`
             })
         }
-        else if (typeOfUser === "teacher") {
+        else if (createUser === "teacher") {
             const newUser = new Teacher({
                 fullName,
                 email,
                 password: hashedPassword
             })
-            generateToken(newUser._id, res)
             await newUser.save()
             return res.status(201).json({
                 message: `Created user with ${newUser.role} successfully`
             })
         }
-        else if (typeOfUser === "student") {
+        else if (createUser === "student") {
             const newUser = new Student({
                 fullName,
                 email,
                 password: hashedPassword
             })
-            generateToken(newUser._id, res)
             await newUser.save()
             return res.status(201).json({
                 message: `Created user with ${newUser.role} successfully`
@@ -75,38 +109,78 @@ export const createUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
     const { id: userID } = req.params;
-    const { fullName, password, role, gender, experience, departmentID, dob } = req.body;
+    const { fullName, password, dob, gender, experience, departmentID } = req.body;
+    if (!mongoose.Types.ObjectId.isValid(userID)) {
+        return res.status(400).json({
+            message: "Invalid User ID"
+        })
+    }
     try {
-        const updatedUser = await User.findByIdAndUpdate(userID, {
-            fullName: fullName,
-            password: password,
-            role: role,
-            gender: gender,
-            experience: experience,
-            departmentID: departmentID,
-            dob: dob,
-        }, { overwriteDiscriminatorKey: true, new: true })
+        const user = await User.findById(userID);
+        if (user.role === "Admin") {
+            const updatedUser = await Admin.findByIdAndUpdate(userID,
+                { fullName, password, dob, gender, experience, departmentID },
+                { new: true, runValidators: true });
 
-        if (!updateUser) {
-            return res.status(400).json({
-                message: "Updated user failed"
+            res.status(200).json({
+                message: `Update user with ${updatedUser.role} role successfully`,
+                updatedUser
             })
         }
+        else if (user.role === "Teacher") {
+            const updatedUser = await Teacher.findByIdAndUpdate(userID,
+                { fullName, password, dob, gender, experience, departmentID },
+                { new: true, runValidators: true });
 
-        res.status(200).json({
-            message: `Updated user successfully with role is ${updatedUser.role}`,
-            updatedUser
-        })
+            res.status(200).json({
+                message: `Update user with ${updatedUser.role} role successfully`,
+                updatedUser
+            })
+        }
+        else if (user.role === "Student") {
+            const updatedUser = await Student.findByIdAndUpdate(userID,
+                { fullName, password, dob, gender, experience, departmentID },
+                { new: true, runValidators: true });
 
+            res.status(200).json({
+                message: `Update user with ${updatedUser.role} role successfully`,
+                updatedUser
+            })
+        }
     } catch (error) {
-        console.log(`Error updateUser in controller ${error.message}`)
+        console.log(`Error updateUser in controller ${error.message} `);
         res.status(500).json({
             message: "Internal Server Error"
         })
     }
 }
 
+export const deleteUser = async (req, res) => {
+    const { id: userId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({
+            message: "Invalid User ID"
+        })
+    }
+    try {
+        const deletedUser = await User.findByIdAndDelete(userId, { new: true });
+        if (!deletedUser) {
+            return res.status(400).json({
+                message: "Delete user failed"
+            })
+        }
 
+        res.status(200).json({
+            message: `Delete user successfully with role is ${deletedUser.role}`
+        })
+
+    } catch (error) {
+        console.log(`Error deleteUser in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Errors"
+        })
+    }
+}
 
 // department 
 export const createDepartment = async (req, res) => {
@@ -132,10 +206,15 @@ export const createDepartment = async (req, res) => {
 }
 
 export const updateDepartment = async (req, res) => {
-    const { id } = req.params;
+    const { id: departmentID } = req.params;
     const { name, departmentType } = req.body;
+    if (!mongoose.Types.ObjectId.isValid(departmentID)) {
+        return res.status(400).json({
+            message: "Invalid User ID"
+        })
+    }
     try {
-        const upadatedDepartment = await Department.findByIdAndUpdate(id, {
+        const upadatedDepartment = await Department.findByIdAndUpdate(departmentID, {
             name,
             departmentType
         }, { new: true }).select(["-createdAt", "-updatedAt"]);
@@ -157,9 +236,33 @@ export const updateDepartment = async (req, res) => {
     }
 }
 
-// todo
 export const deleteDepartment = async (req, res) => {
+    const { id: departmentID } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(departmentID)) {
+        return res.status(400).json({
+            message: "Invalid Department ID"
+        })
+    }
+    try {
+        const department = await Department.findById(departmentID);
+        const count = await User.countDocuments({
+            departmentID: department._id
+        })
 
+        if (count > 0) {
+            return res.status(400).json({
+                message: `Cannot delete ${department.name}. There are ${count} person belong to this department`
+            })
+        }
+
+        await Department.findByIdAndDelete(departmentID, { new: true });
+        res.status(200).json({
+            message: `${department.name} deparment has been deleted successfully`
+        })
+
+    } catch (error) {
+
+    }
 }
 
 // subject 
@@ -200,6 +303,12 @@ export const createSubject = async (req, res) => {
 export const updateSubject = async (req, res) => {
     const { id } = req.params;
     const { name, number_of_credits } = req.body;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({
+            message: "Invalid Subject ID"
+        })
+    }
+
     try {
         const updatedSubject = await Subject.findByIdAndUpdate(id,
             {
@@ -207,9 +316,9 @@ export const updateSubject = async (req, res) => {
                 number_of_credits: number_of_credits
             }, { new: true })
 
-        if (updatedSubject.errors === undefined) {
+        if (!updatedSubject) {
             return res.status(404).json({
-                message: "Subject not found"
+                message: "Subject not found!!!"
             })
         }
 

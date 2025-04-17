@@ -35,7 +35,7 @@ export const requireAdmin = async (req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
         const userId = decoded.userId;
         const user = await User.findById(userId);
-        if (user.role !== 'Admin') {
+        if (user.role !== 'admin') {
             return res.status(400).json({
                 message: "Unauthorised - You are not Admin!!!"
             })
