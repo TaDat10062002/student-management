@@ -81,7 +81,10 @@ export const updateAdmin = async (req, res) => {
 
         })
     } catch (error) {
-
+        console.log(`Error updateTeacher in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
     }
 }
 
@@ -89,11 +92,32 @@ export const updateTeacher = async (req, res) => {
     const { id } = req.params;
     const { fullName, password, role, gender, experience, departmentID, dob } = req.body;
     try {
-        const user = await User.findByIdAndUpdate(id, {
+        // phai chon user vi no co cai key role
+        const updatedUser = await User.findByIdAndUpdate(id, {
+            fullName: fullName,
+            password: password,
+            role: role,
+            gender: gender,
+            experience: `${experience} years`,
+            departmentID: departmentID,
+            dob: dob,
+        }, { overwriteDiscriminatorKey: true, new: true })
 
+        if (!updatedUser) {
+            return res.status(400).json({
+                message: "Updated teacher failed",
+            })
+        }
+
+        return res.status(200).json({
+            message: "Update teacher successfully",
+            updatedUser
         })
     } catch (error) {
-
+        console.log(`Error updateTeacher in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
     }
 }
 
