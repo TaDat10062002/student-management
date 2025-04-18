@@ -6,6 +6,7 @@ import Subject from "../models/subject.model.js";
 import Teacher from "../models/teacher.model.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
+const { ObjectId } = mongoose.Types;
 
 // user
 export const getUsers = async (req, res) => {
@@ -19,18 +20,35 @@ export const getUsers = async (req, res) => {
             })
         }
 
-        // role department
-
-        // role
-        if (role) {
-            const users = await User.find({ role: role })
+        if (role && departmentID) {
+            const users = await User.find({
+                role: role,
+                departmentID: departmentID
+            })
             return res.status(200).json({
                 users,
                 amount: users.length
             })
         }
 
-        // department
+        else if (role) {
+            const users = await User.find({ role: role });
+            return res.status(200).json({
+                users,
+                amount: users.length
+            })
+        }
+
+        else {
+            const teachers = await Teacher.find({ departmentID: departmentID });
+            const students = await Student.find({ departmentID: departmentID });
+            const users = [...teachers, ...students];
+
+            return res.status(200).json({
+                users,
+                amount: users.length
+            })
+        }
 
 
 
