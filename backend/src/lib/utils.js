@@ -17,3 +17,8 @@ export const destroyToken = async (res) => {
         maxAge: times
     });
 }
+
+export const generateCourseCode = (course) => {
+    if (!course) return "1000";
+    return Number(course.course_code) + 1;
+}

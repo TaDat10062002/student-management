@@ -4,7 +4,7 @@ import { createUser, deleteUser, getUsers, updateUser } from "../controllers/use
 const routers = express.Router();
 
 // User routes
-routers.get('/', requireAdmin, getUsers);
+routers.get('/', protectedRoute, requireAdmin, getUsers);
 routers.post('/:userType', protectedRoute, requireAdmin, createUser);
 routers.put('/:id/edit', protectedRoute, requireAdmin, updateUser);
 routers.delete('/:id', protectedRoute, requireAdmin, deleteUser);
