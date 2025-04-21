@@ -7,7 +7,7 @@ const departmentSchema = new mongoose.Schema({
     },
     departmentType: {
         type: String,
-        enum: ['Natural', 'Society'],
+        enum: ['natural', 'society'],
         default: ''
     }
 }, { timestamps: true });
