@@ -6,12 +6,11 @@ import Subject from "../models/subject.model.js";
 import Teacher from "../models/teacher.model.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
-const { ObjectId } = mongoose.Types;
 
 // user
 export const getUsers = async (req, res) => {
-    const role = req.query.role || '';
-    const departmentID = req.query.departmentID || '';
+    const role = req.query.role || null;
+    const departmentID = req.query.departmentID || null;
     try {
         const users = await User.find().select("-password");
         if (users.length === 0) {
@@ -39,23 +38,24 @@ export const getUsers = async (req, res) => {
             })
         }
 
-        else {
+        else if (departmentID) {
             const teachers = await Teacher.find({ departmentID: departmentID });
             const students = await Student.find({ departmentID: departmentID });
             const users = [...teachers, ...students];
-
             return res.status(200).json({
                 users,
                 amount: users.length
             })
         }
 
+        else {
+            res.status(200).json({
+                users,
+                amount: users.length
+            })
+        }
 
 
-        res.status(200).json({
-            users,
-            amount: users.length
-        })
     } catch (error) {
         console.log(`Error getUsers in controller ${error.message}`);
         res.status(500).json({
@@ -201,6 +201,28 @@ export const deleteUser = async (req, res) => {
 }
 
 // department 
+export const getDepartments = async (req, res) => {
+    const type = req.query.type;
+    try {
+        const departments = await Department.find();
+        if (departments.length === 0) {
+            return res.status(404).json({
+                message: "No department was found!!!"
+            })
+        }
+
+        res.status(200).json({
+            departments,
+            amount: departments.length
+        })
+    } catch (error) {
+        console.log(`Error getDepartment in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
 export const createDepartment = async (req, res) => {
     const { name, departmentType } = req.body;
     try {
@@ -288,7 +310,7 @@ export const createSubject = async (req, res) => {
     const { name, number_of_credits } = req.body;
     try {
         if (!name || !number_of_credits) {
-            return res.startus(400).json({
+            return res.status(400).json({
                 message: "All fields are required"
             })
         }
@@ -357,3 +379,4 @@ export const updateSubject = async (req, res) => {
 export const deleteSubject = async (req, res) => {
 
 }
+

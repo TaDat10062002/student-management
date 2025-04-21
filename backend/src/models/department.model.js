@@ -8,7 +8,7 @@ const departmentSchema = new mongoose.Schema({
     departmentType: {
         type: String,
         enum: ['Natural', 'Society'],
-        required: true
+        default: ''
     }
 }, { timestamps: true });
 const Department = mongoose.model("Department", departmentSchema);
