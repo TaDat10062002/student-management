@@ -7,6 +7,7 @@ import departmentRoute from "./routes/department.route.js";
 import subjectRoute from "./routes/subject.route.js";
 import userRoute from "./routes/user.route.js";
 import courseRoute from "./routes/course.route.js";
+import registeredCourseRoute from "./routes/registered_course.js";
 
 dotenv.config();
 const PORT = process.env.PORT;
@@ -25,6 +26,7 @@ app.use("/api/user/", userRoute);
 app.use("/api/department/", departmentRoute);
 app.use("/api/subject/", subjectRoute);
 app.use("/api/course/", courseRoute);
+app.use("/api/registered-course/", registeredCourseRoute);
 
 app.listen(PORT, () => {
     connectDB(MONGODB_URI)
