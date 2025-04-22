@@ -14,7 +14,7 @@ const teacherSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
-    departmentID: {
+    department: {
         type: Schema.Types.ObjectId,
         ref: "Department",
         default: null

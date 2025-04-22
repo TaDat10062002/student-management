@@ -10,7 +10,7 @@ const studentSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
-    departmentID: {
+    department: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Department",
         default: null

@@ -45,12 +45,9 @@ export const requireAdmin = async (req, res, next) => {
 }
 
 export const requireTeacherOrAdmin = async (req, res, next) => {
-    const token = req.cookies.jwt;
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-        const userId = decoded.userId;
-        const user = await User.findById(userId);
-        if (user.role !== 'admin' || user.role !== 'teacher') {
+        const user = req.user;
+        if (user.role !== 'admin' && user.role !== 'teacher') {
             return res.status(403).json({
                 message: "Unauthorised - You must be Admin or Teacher!!!"
             })
@@ -58,7 +55,43 @@ export const requireTeacherOrAdmin = async (req, res, next) => {
         req.user = user;
         next();
     } catch (error) {
-        console.log(`Error requireAdmin in authMiddleWare ${error.message}`);
+        console.log(`Error requireTeacherOrAdmin in authMiddleWare ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+export const requireAdminOrStudent = async (req, res, next) => {
+    try {
+        const user = req.user;
+        if (user.role !== 'admin' && user.role !== 'student') {
+            return res.status(403).json({
+                message: "Unauthorised - You must be Admin or Student!!!"
+            })
+        }
+        req.user = user;
+        next();
+    } catch (error) {
+        console.log(`Error requireTeacherOrAdmin in authMiddleWare ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+export const requireStudent = async (req, res, next) => {
+    try {
+        const user = req.user;
+        if (user.role !== 'student') {
+            return res.status(403).json({
+                message: "You must be a student"
+            })
+        }
+        req.user = user;
+        next();
+    } catch (error) {
+        console.log(`Error requireStudent in authMiddleWare ${error.message}`);
         res.status(500).json({
             message: "Internal Server Error"
         })
