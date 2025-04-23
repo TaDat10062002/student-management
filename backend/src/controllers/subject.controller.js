@@ -6,38 +6,63 @@ import Course from "../models/course.model.js";
 export const getSubjects = async (req, res) => {
     const search = req.query.search || '';
     const page = req.query.page || 1;
-    const item_per_page = req.query.item_per_page || 3;
+    const subject_per_page = req.query.subject_per_page || 3;
     try {
-        const subjects = await Subject.find();
+        if (search) {
+            const querySubject = Subject.find({
+                $or: [
+                    { name: { $regex: search, $options: "i" } },
+                    { number_of_credits: { $regex: search, $options: "i" } },
+                ]
+            })
+            const subjects = await querySubject.clone().skip((page - 1) * subject_per_page).limit(subject_per_page);
+            if (subjects.length === 0) {
+                return res.status(404).json({
+                    message: "No subjects was found!!!"
+                })
+            }
+            const totalDocs = (await querySubject).length;
+            const totalPages = Math.ceil(totalDocs / subject_per_page);
+            if (page > totalPages) {
+                return res.status(404).json({
+                    message: "Page not found!!!"
+                })
+            }
+            res.status(200).json({
+                subjects,
+                pagination: {
+                    currentPage: Number(page),
+                    totalPages: totalPages,
+                    subject_per_page: subject_per_page,
+                    totalSubjects: subjects.length
+                }
+            })
+        }
+
+        const querySubject = Subject.find();
+        const subjects = await querySubject.clone().skip((page - 1) * subject_per_page).limit(subject_per_page);
         if (subjects.length === 0) {
             return res.status(404).json({
                 message: "No subjects was found!!!"
             })
         }
-        // paginate
-        const totalDocs = subjects.length;
-        const totalPages = Math.ceil(totalDocs / item_per_page);
-        // check current page > totalPages 
+        const totalDocs = (await querySubject).length;
+        const totalPages = Math.ceil(totalDocs / subject_per_page);
         if (page > totalPages) {
             return res.status(404).json({
                 message: "Page not found!!!"
             })
         }
-        // search
-        const rs = await Subject.find({
-            $or: [
-                { name: { $regex: search, $options: "i" } },
-                { number_of_credits: { $regex: search, $options: "i" } },
-            ]
-        }).skip((page - 1) * item_per_page).limit(item_per_page)
         res.status(200).json({
-            subjects: rs,
+            subjects,
             pagination: {
                 currentPage: Number(page),
                 totalPages: totalPages,
-                amount: rs.length
+                subject_per_page: subject_per_page,
+                totalSubjects: subjects.length
             }
         })
+
     } catch (error) {
         console.log(`Error getSubjects in controller ${error.message}`);
         res.status(500).json({
