@@ -6,7 +6,59 @@ import Subject from "../models/subject.model.js";
 import User from "../models/user.model.js";
 
 export const getAllCourse = async (req, res) => {
+    const search = req.query.search || '';
+    const page = req.query.page || 1;
+    const course_per_page = req.query.course_per_page || 3;
     try {
+        const courses = await Course.aggregate([
+            // teacher
+            {
+                // nhu populate
+                $lookup: {
+                    from: "users",
+                    localField: "teacher",
+                    foreignField: "_id",
+                    as: "teacherInfo"
+                }
+            },
+            { $unwind: '$teacherInfo' },
+
+            // subject
+            {
+                $lookup: {
+                    from: "subjects",
+                    localField: "subject",
+                    foreignField: "_id",
+                    as: "subjectInfo"
+                }
+            },
+            { $unwind: '$subjectInfo' },
+            {
+                // 1 la show 0 la hide
+                $project: {
+                    _id: 0,
+                    course_code: 1,
+                    amount: 1,
+                    'teacherInfo.fullName': 1,
+                    'subjectInfo.name': 1,
+                    'subjectInfo.number_of_credits': 1,
+                }
+            },
+            {
+                // tim kiem nhu find
+                $match: {
+                    $or: [
+                        { 'teacherInfo.fullName': { $regex: search, $options: "i" } },
+                        { 'subjectInfo.name': { $regex: search, $options: "i" } }
+                    ]
+                }
+            },
+        ])
+
+        // pagination later
+        return res.status(200).json({
+            courses
+        })
 
     } catch (error) {
         console.log(`Error getAllCourse in controller ${error.message}`);

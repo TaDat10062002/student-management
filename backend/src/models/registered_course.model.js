@@ -6,7 +6,7 @@ const registeredCourseSchema = new mongoose.Schema({
         ref: "Course",
         default: ""
     },
-    studentId: {
+    student: {
         type: Schema.Types.ObjectId,
         ref: "User",
         default: ""
