@@ -92,6 +92,13 @@ export const getUsers = async (req, res) => {
 
         const totalDocs = (await queryUser).length;
         const totalPages = Math.ceil(totalDocs / user_per_page);
+
+        if (users.length === 0) {
+            return res.status(404).json({
+                message: "No users was found!!!"
+            })
+        }
+
         if (page > totalPages) {
             return res.status(404).json({
                 message: "Page not found!!!"

@@ -15,19 +15,27 @@ export const getSubjects = async (req, res) => {
                     { number_of_credits: { $regex: search, $options: "i" } },
                 ]
             })
-            const subjects = await querySubject.clone().skip((page - 1) * subject_per_page).limit(subject_per_page);
+            
+            const subjects = await querySubject
+                .clone()
+                .skip((page - 1) * subject_per_page)
+                .limit(subject_per_page);
+
             if (subjects.length === 0) {
                 return res.status(404).json({
                     message: "No subjects was found!!!"
                 })
             }
+
             const totalDocs = (await querySubject).length;
             const totalPages = Math.ceil(totalDocs / subject_per_page);
+
             if (page > totalPages) {
                 return res.status(404).json({
                     message: "Page not found!!!"
                 })
             }
+
             res.status(200).json({
                 subjects,
                 pagination: {
@@ -40,14 +48,20 @@ export const getSubjects = async (req, res) => {
         }
 
         const querySubject = Subject.find();
-        const subjects = await querySubject.clone().skip((page - 1) * subject_per_page).limit(subject_per_page);
+        const subjects = await querySubject
+            .clone()
+            .skip((page - 1) * subject_per_page)
+            .limit(subject_per_page);
+
         if (subjects.length === 0) {
             return res.status(404).json({
                 message: "No subjects was found!!!"
             })
         }
+
         const totalDocs = (await querySubject).length;
         const totalPages = Math.ceil(totalDocs / subject_per_page);
+
         if (page > totalPages) {
             return res.status(404).json({
                 message: "Page not found!!!"
