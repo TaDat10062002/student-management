@@ -3,20 +3,11 @@ import { generateCourseCode } from "../lib/utils.js";
 import Course from "../models/course.model.js";
 import Teacher from "../models/teacher.model.js";
 import Subject from "../models/subject.model.js";
-
+import User from "../models/user.model.js";
 
 export const getAllCourse = async (req, res) => {
     try {
-        const course = await Course.find();
-        if (course.length === 0) {
-            return res.status(404).json({
-                message: "No courses was found!!!"
-            })
-        }
-        res.status(200).json({
-            course,
-            amount: course.length
-        })
+
     } catch (error) {
         console.log(`Error getAllCourse in controller ${error.message}`);
         res.status(500).json({

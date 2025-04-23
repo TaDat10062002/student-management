@@ -4,8 +4,8 @@ import { createUser, deleteUser, getUsers, updateUser } from "../controllers/use
 const routers = express.Router();
 
 // User routes
-routers.get('/', protectedRoute, requireAdmin, getUsers);
-routers.post('/:userType', protectedRoute, requireAdmin, createUser);
-routers.put('/:id/edit', protectedRoute, requireAdmin, updateUser);
-routers.delete('/:id', protectedRoute, requireAdmin, deleteUser);
+routers.get('/', protectedRoute, requireAdmin, getUsers); // admin
+routers.post('/:userType', protectedRoute, requireAdmin, createUser);  // admin
+routers.put('/:id/edit', protectedRoute, updateUser);  // 3 roles
+routers.delete('/:id', protectedRoute, requireAdmin, deleteUser);  // admin
 export default routers;

@@ -4,6 +4,9 @@ import Subject from "../models/subject.model.js";
 import Course from "../models/course.model.js";
 // subject 
 export const getSubjects = async (req, res) => {
+    const search = req.query.search || '';
+    const page = req.query.page || 1;
+    const item_per_page = req.query.item_per_page || 3;
     try {
         const subjects = await Subject.find();
         if (subjects.length === 0) {
@@ -11,15 +14,38 @@ export const getSubjects = async (req, res) => {
                 message: "No subjects was found!!!"
             })
         }
-
+        // paginate
+        const totalDocs = subjects.length;
+        const totalPages = Math.ceil(totalDocs / item_per_page);
+        // check current page > totalPages 
+        if (page > totalPages) {
+            return res.status(404).json({
+                message: "Page not found!!!"
+            })
+        }
+        // search
+        const rs = await Subject.find({
+            $or: [
+                { name: { $regex: search, $options: "i" } },
+                { number_of_credits: { $regex: search, $options: "i" } },
+            ]
+        }).skip((page - 1) * item_per_page).limit(item_per_page)
         res.status(200).json({
-            subjects,
-            amount: subjects.length
+            subjects: rs,
+            pagination: {
+                currentPage: Number(page),
+                totalPages: totalPages,
+                amount: rs.length
+            }
         })
     } catch (error) {
-
+        console.log(`Error getSubjects in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
     }
 }
+
 export const createSubject = async (req, res) => {
     const { name, number_of_credits } = req.body;
     try {

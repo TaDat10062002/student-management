@@ -5,17 +5,21 @@ const courseSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    teacherID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Teacher"
+    teacher: {
+        type: Schema.Types.ObjectId,
+        ref: "User"
     },
-    subjectID: {
-        type: mongoose.Schema.Types.ObjectId,
+    subject: {
+        type: Schema.Types.ObjectId,
         ref: "Subject"
     },
     amount: {
         type: String,
         required: true
+    },
+    department: {
+        type: Schema.Types.ObjectId,
+        ref: "Department"
     }
 }, { timestamps: true });
 
