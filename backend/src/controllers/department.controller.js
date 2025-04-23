@@ -6,41 +6,80 @@ import User from "../models/user.model.js";
 export const getDepartments = async (req, res) => {
     const search = req.query.search || '';
     const page = req.query.page || 1;
-    const item_per_page = req.query.item_per_page || 3;
+    const department_per_page = req.query.department_per_page || 3;
     try {
-        const departments = await Department.find();
+        if (search) {
+            const queryDepartment = Department.find({
+                $or: [
+                    { name: { $regex: search, $options: "i" } },
+                    { departmentType: { $regex: search, $options: "i" } }
+                ]
+            });
+
+            const departments = await queryDepartment
+                .clone()
+                .select("name departmentType")
+                .skip((page - 1) * department_per_page)
+                .limit(department_per_page);
+
+            const totalDocs = (await queryDepartment).length;
+            const totalPages = Math.ceil(totalDocs / department_per_page);
+
+            if (departments.length === 0) {
+                return res.status(404).json({
+                    message: "No department was found!!!"
+                })
+            }
+
+            if (page > totalPages) {
+                return res.status(404).json({
+                    message: "Page not found!!!"
+                })
+            }
+
+            return res.status(200).json({
+                departments,
+                pagination: {
+                    currentPage: Number(page),
+                    totalPages: totalPages,
+                    department_per_page: department_per_page,
+                    totalDepartments: departments.length
+                }
+            })
+        }
+        const queryDepartment = Department.find();
+        const departments = await queryDepartment
+            .clone()
+            .select("name departmentType")
+            .skip((page - 1) * department_per_page)
+            .limit(department_per_page);
+
+        const totalDocs = (await queryDepartment).length;
+        const totalPages = Math.ceil(totalDocs / department_per_page);
+
         if (departments.length === 0) {
             return res.status(404).json({
                 message: "No department was found!!!"
             })
         }
-        // paginate 
-        const totalDocs = departments.length;
-        const totalPages = Math.ceil(totalDocs / item_per_page);
-        // check current page > totalPages 
+
         if (page > totalPages) {
             return res.status(404).json({
                 message: "Page not found!!!"
             })
         }
-        // search 
-        // (page - 1) * item_per_page tru truong hop item bi lo 
-        // vi du trang 1 { 1, 2 } trang 2{ 2, 3 } => trang 1 { 1, 2 } trang 2{ 3 }
-        const rs = await Department.find({
-            $or: [
-                { name: { $regex: search, $options: "i" } },
-                { departmentType: { $regex: search, $options: "i" } },
-            ]
-        }).skip((page - 1) * item_per_page).limit(item_per_page);
 
         return res.status(200).json({
-            departments: rs,
+            departments,
             pagination: {
-                page: Number(page),
+                currentPage: Number(page),
                 totalPages: totalPages,
-                amount: rs.length
+                department_per_page: department_per_page,
+                totalDepartments: departments.length
             }
-        });
+        })
+
+
     } catch (error) {
         console.log(`Error getDepartment in controller ${error.message}`);
         res.status(500).json({
