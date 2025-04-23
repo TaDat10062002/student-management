@@ -1,5 +1,5 @@
 import express from "express";
-import { createCourse, getAllCourse, updateCourse } from "../controllers/course.controller.js";
+import { createCourse, deleteCourse, getAllCourse, updateCourse } from "../controllers/course.controller.js";
 import { protectedRoute, requireAdmin } from "../middleware/auth.middleware.js";
 
 const routers = express.Router();
@@ -8,5 +8,5 @@ const routers = express.Router();
 routers.get('/', protectedRoute, getAllCourse); // 3 roles
 routers.post('/', protectedRoute, requireAdmin, createCourse);  // admin
 routers.put('/:id/edit', protectedRoute, requireAdmin, updateCourse);  // admin
-routers.delete('/:id', protectedRoute, requireAdmin, createCourse);  // admin
+routers.delete('/:id', protectedRoute, requireAdmin, deleteCourse);  // admin
 export default routers;

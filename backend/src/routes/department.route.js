@@ -1,5 +1,5 @@
 import express from "express";
-import { protectedRoute, requireAdmin, requireTeacherOrAdmin } from "../middleware/auth.middleware.js";
+import { protectedRoute, requireAdmin } from "../middleware/auth.middleware.js";
 import { createDepartment, deleteDepartment, getDepartments, updateDepartment } from "../controllers/department.controller.js";
 const routers = express.Router();
 

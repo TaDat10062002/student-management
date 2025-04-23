@@ -97,3 +97,21 @@ export const requireStudent = async (req, res, next) => {
         })
     }
 }
+
+export const requireTeacher = async (req, res, next) => {
+    try {
+        const user = req.user;
+        if (user.role !== 'teacher') {
+            return res.status(403).json({
+                message: "You must be a teacher"
+            })
+        }
+        req.user = user;
+        next();
+    } catch (error) {
+        console.log(`Error requireStudent in authMiddleWare ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
