@@ -5,8 +5,8 @@ import { protectedRoute, requireAdmin } from "../middleware/auth.middleware.js";
 const routers = express.Router();
 
 // Courses routes
-routers.get('/', protectedRoute, getAllCourse);
-routers.post('/', protectedRoute, requireAdmin, createCourse);
-routers.put('/:id/edit', protectedRoute, requireAdmin, updateCourse);
-routers.delete('/:id', protectedRoute, requireAdmin, createCourse);
+routers.get('/', protectedRoute, getAllCourse); // 3 roles
+routers.post('/', protectedRoute, requireAdmin, createCourse);  // admin
+routers.put('/:id/edit', protectedRoute, requireAdmin, updateCourse);  // admin
+routers.delete('/:id', protectedRoute, requireAdmin, createCourse);  // admin
 export default routers;

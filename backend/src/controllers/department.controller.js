@@ -4,7 +4,9 @@ import User from "../models/user.model.js";
 
 // department 
 export const getDepartments = async (req, res) => {
-    const type = req.query.type;
+    const search = req.query.search || '';
+    const page = req.query.page || 1;
+    const item_per_page = req.query.item_per_page || 3;
     try {
         const departments = await Department.find();
         if (departments.length === 0) {
@@ -12,18 +14,33 @@ export const getDepartments = async (req, res) => {
                 message: "No department was found!!!"
             })
         }
-        if (type) {
-            const departments = await Department.find({ departmentType: type })
-            res.status(200).json({
-                departments,
-                amount: departments.length
+        // paginate 
+        const totalDocs = departments.length;
+        const totalPages = Math.ceil(totalDocs / item_per_page);
+        // check current page > totalPages 
+        if (page > totalPages) {
+            return res.status(404).json({
+                message: "Page not found!!!"
             })
         }
+        // search 
+        // (page - 1) * item_per_page tru truong hop item bi lo 
+        // vi du trang 1 { 1, 2 } trang 2{ 2, 3 } => trang 1 { 1, 2 } trang 2{ 3 }
+        const rs = await Department.find({
+            $or: [
+                { name: { $regex: search, $options: "i" } },
+                { departmentType: { $regex: search, $options: "i" } },
+            ]
+        }).skip((page - 1) * item_per_page).limit(item_per_page);
 
-        res.status(200).json({
-            departments,
-            amount: departments.length
-        })
+        return res.status(200).json({
+            departments: rs,
+            pagination: {
+                page: Number(page),
+                totalPages: totalPages,
+                amount: rs.length
+            }
+        });
     } catch (error) {
         console.log(`Error getDepartment in controller ${error.message}`);
         res.status(500).json({

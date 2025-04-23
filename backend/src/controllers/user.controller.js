@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Admin from "../models/admin.model.js";
 import Student from "../models/student.model.js";
 import Teacher from "../models/teacher.model.js";
@@ -6,52 +7,106 @@ import bcrypt from "bcrypt";
 
 // user
 export const getUsers = async (req, res) => {
-    const role = req.query.role || null;
+    const search = req.query.search || '';
     const departmentID = req.query.departmentID || null;
+    const page = req.query.page || 1;
+    const user_per_page = req.query.user_per_page || 3;
+    // su dung clone de ko can lap lai query 
     try {
-        const users = await User.find().select("-password");
-        if (users.length === 0) {
+        if (departmentID) {
+            // tim dung la tong cong teacher va student
+            const queryUser = User.find({
+                role: { $in: ['student', 'teacher'] },
+                // format lai id
+                department: new mongoose.Types.ObjectId(departmentID)
+            })
+
+            const users = await queryUser
+                .clone()
+                .select("fullName email gender role department")
+                .skip((page - 1) * user_per_page)
+                .limit(user_per_page);
+
+            const totalDocs = (await queryUser).length;
+            const totalPages = Math.ceil(totalDocs / user_per_page);
+
+            if (page > totalPages) {
+                return res.status(404).json({
+                    message: "Page not found!!!"
+                })
+            }
+
+            return res.status(200).json({
+                users,
+                pagination: {
+                    currentPage: Number(page),
+                    totalPages: totalPages,
+                    user_per_page: user_per_page,
+                    totalUsers: users.length,
+                }
+            })
+        }
+        // search fullName email gender role and paginate
+        if (search) {
+            const queryUser = User.find({
+                $or: [
+                    { fullName: { $regex: search, $options: "i" } },
+                    { email: { $regex: search, $options: "i" } },
+                    { gender: { $regex: search, $options: "i" } },
+                    { role: { $regex: search, $options: "i" } },
+                ]
+            })
+
+            const users = await queryUser
+                .clone()
+                .select("fullName email gender role department")
+                .skip((page - 1) * user_per_page)
+                .limit(user_per_page);
+
+            const totalDocs = (await queryUser).length;
+            const totalPages = Math.ceil(totalDocs / user_per_page);
+
+            if (page > totalPages) {
+                return res.status(404).json({
+                    message: "Page not found!!!"
+                })
+            }
+
+            return res.status(200).json({
+                users,
+                pagination: {
+                    currentPage: Number(page),
+                    totalPages: totalPages,
+                    user_per_page: user_per_page,
+                    totalUsers: users.length,
+                }
+            })
+        }
+
+        const queryUser = User.find();
+        const users = await queryUser
+            .clone()
+            .select("fullName email role gender department")
+            .skip((page - 1) * user_per_page)
+            .limit(user_per_page);
+
+        const totalDocs = (await queryUser).length;
+        const totalPages = Math.ceil(totalDocs / user_per_page);
+        if (page > totalPages) {
             return res.status(404).json({
-                message: "No user was found!!!"
+                message: "Page not found!!!"
             })
         }
 
-        if (role && departmentID) {
-            const users = await User.find({
-                role: role,
-                departmentID: departmentID
-            })
-            return res.status(200).json({
-                users,
-                amount: users.length
-            })
-        }
-
-        else if (role) {
-            const users = await User.find({ role: role });
-            return res.status(200).json({
-                users,
-                amount: users.length
-            })
-        }
-
-        else if (departmentID) {
-            const teachers = await Teacher.find({ departmentID: departmentID });
-            const students = await Student.find({ departmentID: departmentID });
-            const users = [...teachers, ...students];
-            return res.status(200).json({
-                users,
-                amount: users.length
-            })
-        }
-
-        else {
-            res.status(200).json({
-                users,
-                amount: users.length
-            })
-        }
-
+        res.status(200).json({
+            users,
+            pagination: {
+                currentPage: Number(page),
+                totalPages: totalPages,
+                user_per_page: user_per_page,
+                totalUsers: users.length
+            }
+        })
 
     } catch (error) {
         console.log(`Error getUsers in controller ${error.message}`);
@@ -122,45 +177,46 @@ export const createUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
     const { id: userID } = req.params;
-    const { fullName, password, dob, gender, experience, departmentID } = req.body;
-    if (!mongoose.Types.ObjectId.isValid(userID)) {
-        return res.status(400).json({
-            message: "Invalid User ID"
-        })
-    }
+    const loggedUser = req.user;
+    const userId = loggedUser._id.toString();
+    const { fullName, password, dob, gender, experience, department } = req.body;
     try {
-        const user = await User.findById(userID);
-        if (user.role === "Admin") {
+        if (userId !== userID) {
+            return res.status(403).json({
+                message: "You can't update another user information"
+            })
+        }
+        if (loggedUser.role === 'admin') {
             const updatedUser = await Admin.findByIdAndUpdate(userID,
-                { fullName, password, dob, gender, experience, departmentID },
-                { new: true, runValidators: true });
-
-            res.status(200).json({
-                message: `Update user with ${updatedUser.role} role successfully`,
+                { fullName, password },
+                { new: true })
+            return res.status(200).json({
+                message: "Update information successfully",
                 updatedUser
             })
         }
-        else if (user.role === "Teacher") {
+
+        else if (loggedUser.role === 'teacher') {
             const updatedUser = await Teacher.findByIdAndUpdate(userID,
-                { fullName, password, dob, gender, experience, departmentID },
-                { new: true, runValidators: true });
-
-            res.status(200).json({
-                message: `Update user with ${updatedUser.role} role successfully`,
+                { fullName, password, dob, gender, experience, department },
+                { new: true })
+            return res.status(200).json({
+                message: "Update information successfully",
                 updatedUser
             })
         }
-        else if (user.role === "Student") {
+        else if (loggedUser.role === 'student') {
             const updatedUser = await Student.findByIdAndUpdate(userID,
-                { fullName, password, dob, gender, experience, departmentID },
-                { new: true, runValidators: true });
-
-            res.status(200).json({
-                message: `Update user with ${updatedUser.role} role successfully`,
+                { fullName, password, dob, gender, department },
+                { new: true })
+            return res.status(200).json({
+                message: "Update information successfully",
                 updatedUser
             })
         }
-    } catch (error) {
+
+    }
+    catch (error) {
         console.log(`Error updateUser in controller ${error.message} `);
         res.status(500).json({
             message: "Internal Server Error"
@@ -179,14 +235,12 @@ export const deleteUser = async (req, res) => {
         const deletedUser = await User.findByIdAndDelete(userId, { new: true });
         if (!deletedUser) {
             return res.status(400).json({
-                message: "Delete user failed"
+                message: "Delete user failed!!!"
             })
         }
-
         res.status(200).json({
             message: `Delete user successfully with role is ${deletedUser.role}`
         })
-
     } catch (error) {
         console.log(`Error deleteUser in controller ${error.message}`);
         res.status(500).json({

@@ -4,8 +4,8 @@ import { createDepartment, deleteDepartment, getDepartments, updateDepartment } 
 const routers = express.Router();
 
 // Department routes 
-routers.get('/', protectedRoute, getDepartments);
-routers.post('/', protectedRoute, requireAdmin, createDepartment);
-routers.put('/:id/edit', protectedRoute, requireAdmin, updateDepartment);
-routers.delete('/:id', protectedRoute, requireAdmin, deleteDepartment);
+routers.get('/', protectedRoute, getDepartments); // 3 roles
+routers.post('/', protectedRoute, requireAdmin, createDepartment);  // admin
+routers.put('/:id/edit', protectedRoute, requireAdmin, updateDepartment);  // admin
+routers.delete('/:id', protectedRoute, requireAdmin, deleteDepartment);  // admin
 export default routers;
