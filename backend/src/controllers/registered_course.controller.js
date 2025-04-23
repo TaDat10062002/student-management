@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import Course from "../models/course.model.js";
 import RegisteredCourse from "../models/registered_course.model.js";
 import Subject from "../models/subject.model.js";
-import Student from "../models/student.model.js";
 
 export const getAllRegisteredCourse = async (req, res) => {
     const user = req.user;
@@ -21,6 +20,44 @@ export const getAllRegisteredCourse = async (req, res) => {
         })
     } catch (error) {
         console.log(`Error getAllRegisteredCourse in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+export const updateScore = async (req, res) => {
+    const { id: registeredCourseId } = req.params;
+    const { score } = req.body;
+    if (!mongoose.Types.ObjectId.isValid(registeredCourseId)) {
+        return res.status(400).json({
+            message: "Invalid Object ID"
+        })
+    }
+    try {
+        const registeredCourse = await RegisteredCourse.findById(registeredCourseId);
+        if (!registeredCourse) {
+            return res.status(404).json({
+                message: "Registered Course ID not found!!!"
+            })
+        }
+
+        if (score < 0 || score > 10) {
+            return res.status(400).json({
+                message: "score range 1 - 10"
+            })
+        }
+
+        const updatedScore = await RegisteredCourse.findByIdAndUpdate(registeredCourseId, {
+            score
+        }, { new: true })
+
+        return res.status(200).json({
+            message: `Update score is ${updatedScore.score}`,
+            updatedScore
+        })
+    } catch (error) {
+        console.log(`Error updateScore in controller ${error.message}`);
         res.status(500).json({
             message: "Internal Server Error"
         })

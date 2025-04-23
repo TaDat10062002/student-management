@@ -4,7 +4,7 @@ import { createSubject, deleteSubject, getSubjects, updateSubject } from "../con
 const routers = express.Router();
 
 // Subject routes 
-routers.get('/', protectedRoute, getSubjects);  // admin
+routers.get('/', protectedRoute, getSubjects);
 routers.post('/', protectedRoute, requireAdmin, createSubject);  // admin
 routers.put('/:id/edit', protectedRoute, requireAdmin, updateSubject);  // admin
 routers.delete('/:id', protectedRoute, requireAdmin, deleteSubject);  // admin
