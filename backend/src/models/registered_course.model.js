@@ -19,10 +19,6 @@ const registeredCourseSchema = new mongoose.Schema({
     score: {
         type: String,
         default: ''
-    },
-    TypeOfStudent: {
-        type: String,
-        default: ''
     }
 }, { timestamps: true })
 
