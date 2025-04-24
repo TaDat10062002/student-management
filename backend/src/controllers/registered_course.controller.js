@@ -141,7 +141,6 @@ export const registerCourse = async (req, res) => {
     }
 }
 
-
 export const cancelRegisteredCourse = async (req, res) => {
     const { id: registerCourseId } = req.params;
     const user = req.user;
