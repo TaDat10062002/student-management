@@ -3,7 +3,6 @@ import { generateCourseCode } from "../lib/utils.js";
 import Course from "../models/course.model.js";
 import Teacher from "../models/teacher.model.js";
 import Subject from "../models/subject.model.js";
-import User from "../models/user.model.js";
 
 export const getAllCourse = async (req, res) => {
     const search = req.query.search || '';

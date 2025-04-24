@@ -8,6 +8,16 @@ export const getAllRegisteredCourse = async (req, res) => {
     const studentId = user._id;
     try {
         // view only that student registeredCourses
+        const pipeline = [
+            {
+                $match: studentId
+            },
+            {
+                $project: {
+
+                }
+            }
+        ]
         const registeredCourses = await RegisteredCourse.find({ studentId: studentId });
         if (registeredCourses.length === 0) {
             return res.status(404).json({
@@ -67,7 +77,7 @@ export const updateScore = async (req, res) => {
 export const registerCourse = async (req, res) => {
     const { id: course_code } = req.params;
     const user = req.user;
-    const studentId = user._id
+    const studentId = user._id;
     try {
         // check id course exist
         const course = await Course.findOne({ course_code: course_code });
@@ -76,6 +86,17 @@ export const registerCourse = async (req, res) => {
                 message: "Course not found!!!. Please make sure your course information"
             })
         }
+
+        const count = await RegisteredCourse.countDocuments({
+            course_code: course_code
+        })
+
+        if (count === Number(course.amount)) {
+            return res.status(400).json({
+                message: "This course is full right now!!!. Please register the others"
+            })
+        }
+
         // check any student register this course yet
         const isRegisteredCourse = await RegisteredCourse.findOne({ course_code: course_code, studentId: studentId });
         if (isRegisteredCourse) {
@@ -119,6 +140,7 @@ export const registerCourse = async (req, res) => {
         })
     }
 }
+
 
 export const cancelRegisteredCourse = async (req, res) => {
     const { id: registerCourseId } = req.params;
