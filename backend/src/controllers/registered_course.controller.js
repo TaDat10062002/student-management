@@ -11,7 +11,7 @@ export const getAllRegisteredCourse = async (req, res) => {
         const registeredCourses = await RegisteredCourse.find({ studentId: studentId });
         if (registeredCourses.length === 0) {
             return res.status(404).json({
-                message: "No registered course found!!!"
+                message: "No registered course found!!"
             })
         }
         return res.status(200).json({
