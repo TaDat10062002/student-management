@@ -10,7 +10,7 @@ export const getAllCourse = async (req, res) => {
     const page = req.query.page || 1;
     const course_per_page = req.query.course_per_page || 3;
     try {
-        const courses = await Course.aggregate([
+        const pipeline = [
             // teacher
             {
                 // nhu populate
@@ -52,12 +52,29 @@ export const getAllCourse = async (req, res) => {
                         { 'subjectInfo.name': { $regex: search, $options: "i" } }
                     ]
                 }
-            },
-        ])
+            }
+        ]
+        const courses = await Course.aggregate(pipeline);
+        const paginatePipeline = [...pipeline];
+        paginatePipeline.push({ $skip: (page - 1) * course_per_page }, { $limit: course_per_page });
+        const coursesPaginate = await Course.aggregate(paginatePipeline);
+        const totalDocs = courses.length;
+        const totalPages = Math.ceil(totalDocs / course_per_page);
 
-        // pagination later
+        if (page > totalPages) {
+            return res.status(404).json({
+                message: "Page not found!!!"
+            })
+        }
+
         return res.status(200).json({
-            courses
+            courses: coursesPaginate,
+            pagination: {
+                currentPage: Number(page),
+                totalPages: totalPages,
+                course_per_page: course_per_page,
+                totalCourse: courses.length
+            }
         })
 
     } catch (error) {
