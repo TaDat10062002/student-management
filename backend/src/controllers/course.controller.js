@@ -55,7 +55,7 @@ export const getAllCourse = async (req, res) => {
         ]
         const courses = await Course.aggregate(pipeline);
         const paginatePipeline = [...pipeline];
-        paginatePipeline.push({ $skip: (page - 1) * course_per_page }, { $limit: course_per_page });
+        paginatePipeline.push({ $skip: (page - 1) * course_per_page }, { $limit: Number(course_per_page) });
         const coursesPaginate = await Course.aggregate(paginatePipeline);
         const totalDocs = courses.length;
         const totalPages = Math.ceil(totalDocs / course_per_page);

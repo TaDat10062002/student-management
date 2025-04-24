@@ -6,27 +6,81 @@ import Subject from "../models/subject.model.js";
 export const getAllRegisteredCourse = async (req, res) => {
     const user = req.user;
     const studentId = user._id;
+    const page = req.query.page || 1;
+    const registeredCourse_per_page = req.query.registeredCourse_per_page || 3;
     try {
         // view only that student registeredCourses
         const pipeline = [
             {
-                $match: studentId
+                $match: { studentId: studentId }
             },
+            // lookup course
+            {
+                $lookup: {
+                    from: "courses",
+                    localField: "course_code",
+                    foreignField: "code",
+                    as: "courseInfo"
+                }
+            },
+            { $unwind: '$courseInfo' },
+            // lookup teacher 
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "courseInfo.teacher",
+                    foreignField: "_id",
+                    as: "teacherInfo"
+                }
+            },
+            { $unwind: '$teacherInfo' },
+            // lookup subject 
+            {
+                $lookup: {
+                    from: "subjects",
+                    localField: "courseInfo.subject",
+                    foreignField: "_id",
+                    as: "subjectInfo"
+                }
+            },
+            { $unwind: '$subjectInfo' },
             {
                 $project: {
-
+                    "courseInfo.code": 1,
+                    "courseInfo.amount": 1,
+                    "teacherInfo.fullName": 1,
+                    "teacherInfo.email": 1,
+                    "subjectInfo.name": 1,
+                    "subjectInfo.number_of_credits": 1,
+                    _id: 0,
+                    status: 1,
+                    score: 1,
                 }
             }
         ]
-        const registeredCourses = await RegisteredCourse.find({ studentId: studentId });
-        if (registeredCourses.length === 0) {
+        const registeredCourses = await RegisteredCourse.aggregate(pipeline);
+        const paginatePipeline = [...pipeline];
+        paginatePipeline.push(
+            { $skip: (page - 1) * registeredCourse_per_page },
+            { $limit: Number(registeredCourse_per_page) })
+        const registeredCoursePaginate = await RegisteredCourse.aggregate(paginatePipeline);
+        const totalDocs = registeredCourses.length;
+        const totalPages = Math.ceil(totalDocs / registeredCourse_per_page);
+
+        if (page > totalPages) {
             return res.status(404).json({
-                message: "No registered course found!!!"
+                message: "Page not found!!!"
             })
         }
+
         return res.status(200).json({
-            registeredCourses,
-            amount: registeredCourses.length
+            registeredCoursePaginate,
+            pagination: {
+                currentPage: Number(page),
+                totalPages: totalPages,
+                registeredCourse_per_page: Number(registeredCourse_per_page),
+                totalRegisteredCourse: registeredCoursePaginate.length
+            }
         })
     } catch (error) {
         console.log(`Error getAllRegisteredCourse in controller ${error.message}`);
