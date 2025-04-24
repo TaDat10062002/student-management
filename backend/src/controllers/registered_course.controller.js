@@ -93,7 +93,7 @@ export const registerCourse = async (req, res) => {
 
         if (count === Number(course.amount)) {
             return res.status(400).json({
-                message: "This course is full right now!!!. Please register the others"
+                message: "This course is full right now!!!. Please register the othersacaca"
             })
         }
 
