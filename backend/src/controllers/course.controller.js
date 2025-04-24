@@ -63,10 +63,11 @@ export const getAllCourse = async (req, res) => {
 
         if (page > totalPages) {
             return res.status(404).json({
-                message: "Page not found!!!"
+                message: "Page not found!!!!"
             })
         }
 
+        // pagination later
         return res.status(200).json({
             courses: coursesPaginate,
             pagination: {
