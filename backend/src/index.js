@@ -9,7 +9,6 @@ import userRoute from "./routes/user.route.js";
 import courseRoute from "./routes/course.route.js";
 import registeredCourseRoute from "./routes/registered_course.js";
 import classRoute from "./routes/class.route.js";
-import teacherRoute from "./routes/teacher.route.js"
 import cors from "cors";
 dotenv.config();
 const PORT = process.env.PORT;
@@ -32,7 +31,6 @@ app.use(cookieParser());
 app.use("/api/auth/", authRoute);
 app.use("/api/user/", userRoute);
 app.use("/api/department/", departmentRoute);
-app.use("/api/teacher/", teacherRoute);
 app.use("/api/subject/", subjectRoute);
 app.use("/api/class/", classRoute);
 app.use("/api/course/", courseRoute);

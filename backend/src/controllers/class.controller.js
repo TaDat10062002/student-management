@@ -61,6 +61,7 @@ export const getStudentByClass = async (req, res) => {
     const search = req.query.search || '';
     const page = req.query.page || 1;
     const item_per_page = req.query.item_per_page || 5;
+    const classroom = await ClassRoom.findById(classID).select("name -_id");
     try {
         if (search) {
             const queryStudentByClass = Student.find(
@@ -84,6 +85,7 @@ export const getStudentByClass = async (req, res) => {
             const totalPages = Math.ceil(totalDocs / item_per_page);
             return res.status(200).json({
                 students,
+                classroom,
                 pagination: {
                     currentPage: Number(page),
                     totalPages: totalPages,
@@ -102,6 +104,7 @@ export const getStudentByClass = async (req, res) => {
         const totalPages = Math.ceil(totalDocs / item_per_page);
         return res.status(200).json({
             students,
+            classroom,
             pagination: {
                 currentPage: Number(page),
                 totalPages: totalPages,

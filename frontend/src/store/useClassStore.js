@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 
 const useClassStore = create((set) => ({
     classrooms: [],
+    classroom: '',
     studentByClass: [],
     pagination: {},
     isLoaded: false,
@@ -17,7 +18,7 @@ const useClassStore = create((set) => ({
             set({ isLoaded: true })
         } catch (error) {
             console.log(`Error in getAllClasses ${error}`);
-            set({ classrooms: [] })
+            set({ classrooms: [], pagination: {} })
             toast.error(error.response.data.message)
         }
     },
@@ -26,11 +27,11 @@ const useClassStore = create((set) => ({
         set({ isLoaded: false })
         try {
             const res = await axiosInstance.get(`/class/${id}/view?search=${search}&page=${page}&item_per_page=${item_per_page}`);
-            set({ studentByClass: res.data.students, pagination: res.data.pagination })
+            set({ studentByClass: res.data.students, classroom: res.data.classroom, pagination: res.data.pagination })
             set({ isLoaded: true })
         } catch (error) {
             console.log(`Error in getStudentByClass ${error}`);
-            set({ studentByClass: [] })
+            set({ studentByClass: [], classroom: null, pagination: {} })
             toast.error(error.response.data.message)
         }
     }

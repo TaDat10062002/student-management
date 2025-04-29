@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Department from "../models/department.model.js";
 import User from "../models/user.model.js";
-
+import Teacher from "../models/teacher.model.js";
 // department 
 export const getDepartments = async (req, res) => {
     const search = req.query.search || '';
@@ -82,6 +82,68 @@ export const getDepartments = async (req, res) => {
 
     } catch (error) {
         console.log(`Error getDepartment in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+export const getTeachersByDepartment = async (req, res) => {
+    const search = req.query.search || '';
+    const page = req.query.page || 1;
+    const item_per_page = req.query.item_per_page || 5;
+    try {
+        if (search) {
+            const queryTeacherByDepartment = Teacher.find({
+                role: "teacher",
+                $or: [
+                    { fullName: { $regex: search, $options: "i" } },
+                    { email: { $regex: search, $options: "i" } },
+                    { gender: { $regex: search, $options: "i" } },
+                    { experience: { $regex: search, $options: "i" } },
+                ]
+            })
+            const totalDocs = (await queryTeacherByDepartment).length;
+            const totalPages = Math.ceil(totalDocs / item_per_page);
+            const teachers = await queryTeacherByDepartment
+                .clone()
+                .select("fullName email role dob gender experience -_id")
+                .skip((page - 1) * item_per_page)
+                .limit(item_per_page);
+
+            return res.status(200).json({
+                teachers,
+                pagination: {
+                    currentPage: Number(page),
+                    totalPages: totalPages,
+                    item_per_page: item_per_page,
+                    totalTeachers: teachers.length
+                }
+            })
+        }
+
+        const queryTeacherByDepartment = Teacher.find({
+            role: "teacher",
+        })
+        const totalDocs = (await queryTeacherByDepartment).length;
+        const totalPages = Math.ceil(totalDocs / item_per_page);
+        const teachers = await queryTeacherByDepartment
+            .clone()
+            .select("fullName email role dob gender experience -_id")
+            .skip((page - 1) * item_per_page)
+            .limit(item_per_page);
+
+        return res.status(200).json({
+            teachers,
+            pagination: {
+                currentPage: Number(page),
+                totalPages: totalPages,
+                item_per_page: item_per_page,
+                totalTeachers: teachers.length
+            }
+        })
+    } catch (error) {
+        console.log(`Error getTeachersByDepartment in controller ${error.message}`);
         res.status(500).json({
             message: "Internal Server Error"
         })

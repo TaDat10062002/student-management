@@ -124,7 +124,7 @@ export const getUsers = async (req, res) => {
 }
 
 export const createUser = async (req, res) => {
-    const { fullName, email, password, class_id } = req.body;
+    const { fullName, email, password, department_id, class_id } = req.body;
     const { userType } = req.params;
     try {
         // validate data
@@ -156,7 +156,8 @@ export const createUser = async (req, res) => {
             const newUser = new Teacher({
                 fullName,
                 email,
-                password: hashedPassword
+                password: hashedPassword,
+                department: department_id
             })
             await newUser.save()
             return res.status(201).json({

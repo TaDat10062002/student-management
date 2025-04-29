@@ -40,7 +40,7 @@ const Navbar = () => {
                                 <Link to={'/class'} className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Class</Link>
                             </div>
                             <div className='max-sm:hidden'>
-                                <Link to={'/teacher'} className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">teacher</Link>
+                                <Link to={'/department'} className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Department</Link>
                             </div>
                             <div className='max-sm:hidden'>
                                 <Link to={'/subjects'} href="#" className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Subjects</Link>
@@ -49,7 +49,7 @@ const Navbar = () => {
                                 <Link to={'/courses'} href="#" className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Courses</Link>
                             </div>
                             <div className='max-sm:hidden'>
-                                <Link to={'/courses'} href="#" className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Registered Course</Link>
+                                <Link to={'/registered-courses'} href="#" className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Registered Course</Link>
                             </div>
                             <div className='max-sm:hidden'>
                                 <Link to={'/info'} className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white" aria-current="page">Info settings</Link>
@@ -66,10 +66,12 @@ const Navbar = () => {
                         <div className='sm:hidden' id="mobile-menu">
                             <div className="space-y-1 px-2 pt-2 pb-3">
                                 {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
-                                <Link to="/" className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Students</Link>
+                                <Link to="/class" className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Class</Link>
+                                <Link to="/department" className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Department</Link>
                                 <Link to="/subjects" className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Subjects</Link>
                                 <Link to="/courses" className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Courses</Link>
-                                <Link to="/dashboard" className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white" aria-current="page">Dashboard</Link>
+                                <Link to="/registered-course" className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white" aria-current="page">Registered Courses</Link>
+                                <Link to="/info" className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white" aria-current="page">Info</Link>
                                 <Link onClick={handleLogout} className="block rounded-md text-gray-900 px-3 py-2 text-base font-medium bg-white" aria-current="page">Logout</Link>
                             </div>
                         </div> : ''
