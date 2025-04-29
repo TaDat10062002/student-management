@@ -7,7 +7,7 @@ export const getAllRegisteredCourse = async (req, res) => {
     const user = req.user;
     const studentId = user._id;
     const page = req.query.page || 1;
-    const registeredCourse_per_page = req.query.registeredCourse_per_page || 3;
+    const item_per_page = req.query.item_per_page || 3;
     try {
         // view only that student registeredCourses
         const pipeline = [
@@ -61,11 +61,11 @@ export const getAllRegisteredCourse = async (req, res) => {
         const registeredCourses = await RegisteredCourse.aggregate(pipeline);
         const paginatePipeline = [...pipeline];
         paginatePipeline.push(
-            { $skip: (page - 1) * registeredCourse_per_page },
-            { $limit: Number(registeredCourse_per_page) })
+            { $skip: (page - 1) * item_per_page },
+            { $limit: Number(item_per_page) })
         const registeredCoursePaginate = await RegisteredCourse.aggregate(paginatePipeline);
         const totalDocs = registeredCourses.length;
-        const totalPages = Math.ceil(totalDocs / registeredCourse_per_page);
+        const totalPages = Math.ceil(totalDocs / item_per_page);
 
         if (page > totalPages) {
             return res.status(404).json({
@@ -78,7 +78,7 @@ export const getAllRegisteredCourse = async (req, res) => {
             pagination: {
                 currentPage: Number(page),
                 totalPages: totalPages,
-                registeredCourse_per_page: Number(registeredCourse_per_page),
+                item_per_page: Number(item_per_page),
                 totalRegisteredCourse: registeredCoursePaginate.length
             }
         })

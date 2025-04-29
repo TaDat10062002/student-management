@@ -7,7 +7,7 @@ import Subject from "../models/subject.model.js";
 export const getAllCourse = async (req, res) => {
     const search = req.query.search || '';
     const page = req.query.page || 1;
-    const course_per_page = req.query.course_per_page || 3;
+    const item_per_page = req.query.item_per_page || 3;
     try {
         const pipeline = [
             // teacher
@@ -55,10 +55,10 @@ export const getAllCourse = async (req, res) => {
         ]
         const courses = await Course.aggregate(pipeline);
         const paginatePipeline = [...pipeline];
-        paginatePipeline.push({ $skip: (page - 1) * course_per_page }, { $limit: Number(course_per_page) });
+        paginatePipeline.push({ $skip: (page - 1) * item_per_page }, { $limit: Number(item_per_page) });
         const coursesPaginate = await Course.aggregate(paginatePipeline);
         const totalDocs = courses.length;
-        const totalPages = Math.ceil(totalDocs / course_per_page);
+        const totalPages = Math.ceil(totalDocs / item_per_page);
 
         if (page > totalPages) {
             return res.status(404).json({
@@ -72,7 +72,7 @@ export const getAllCourse = async (req, res) => {
             pagination: {
                 currentPage: Number(page),
                 totalPages: totalPages,
-                course_per_page: course_per_page,
+                item_per_page: item_per_page,
                 totalCourse: courses.length
             }
         })

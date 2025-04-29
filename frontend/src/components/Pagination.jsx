@@ -1,31 +1,45 @@
-import React from 'react'
+import React, { useState } from 'react'
+import useClassStore from '../store/useClassStore'
+import { Link, useSearchParams } from 'react-router-dom';
 
 const Pagination = () => {
+    const { pagination } = useClassStore();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const page = searchParams.get('page') || 1;
+    const item_per_page = searchParams.get('records_per_page') || 3;
+    const totalPages = pagination.totalPages;
+
+    let pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+    }
+
     return (
         <div className='pagination text-center mt-5'>
             <nav aria-label="Page navigation example">
                 <ul className="inline-flex -space-x-px text-base h-10">
-                    <li>
-                        <a href="#" className="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
-                    </li>
-                    <li>
-                        <a href="#" className="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
-                    </li>
-                    <li>
-                        <a href="#" className="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
-                    </li>
-                    <li>
-                        <a href="#" aria-current="page" className="flex items-center justify-center px-4 h-10 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
-                    </li>
-                    <li>
-                        <a href="#" className="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">4</a>
-                    </li>
-                    <li>
-                        <a href="#" className="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">5</a>
-                    </li>
-                    <li>
-                        <a href="#" className="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
-                    </li>
+                    {
+                        page > 1 ?
+                            <li>
+                                <Link to={`?page=${Number(page) - 1}`} className="flex items-center justify-center px-4 h-10 leading-tight text-white bg-gray-900 rounded-l-md">Previous</Link>
+                            </li>
+                            : ''
+                    }
+
+                    {
+                        pages.map((currentPage, index) => (
+                            <li key={index}>
+                                <Link to={`?page=${currentPage}`} className={`bg-gray-900 ${currentPage === Number(page) ? ' bg-yellow-500' : ""} flex items-center justify-center px-4 h-10 leading-tight text-white hover:bg-gray-700`}>{currentPage}</Link>
+                            </li>
+                        ))
+                    }
+                    {
+                        page < totalPages ?
+                            <li>
+                                <Link to={`?page=${Number(page) + 1}`} className="flex items-center justify-center px-4 h-10 leading-tight text-white bg-gray-900 rounded-r-md">Next
+                                </Link>
+                            </li> : ''
+                    }
                 </ul>
             </nav>
         </div>

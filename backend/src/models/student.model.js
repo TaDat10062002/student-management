@@ -14,6 +14,11 @@ const studentSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Department",
         default: null
+    },
+    class: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ClassRoom",
+        required: true
     }
 })
 

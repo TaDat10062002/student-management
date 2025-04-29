@@ -6,7 +6,7 @@ import Course from "../models/course.model.js";
 export const getSubjects = async (req, res) => {
     const search = req.query.search || '';
     const page = req.query.page || 1;
-    const subject_per_page = req.query.subject_per_page || 3;
+    const item_per_page = req.query.item_per_page || 3;
     try {
         if (search) {
             const querySubject = Subject.find({
@@ -18,8 +18,8 @@ export const getSubjects = async (req, res) => {
             
             const subjects = await querySubject
                 .clone()
-                .skip((page - 1) * subject_per_page)
-                .limit(subject_per_page);
+                .skip((page - 1) * item_per_page)
+                .limit(item_per_page);
 
             if (subjects.length === 0) {
                 return res.status(404).json({
@@ -28,7 +28,7 @@ export const getSubjects = async (req, res) => {
             }
 
             const totalDocs = (await querySubject).length;
-            const totalPages = Math.ceil(totalDocs / subject_per_page);
+            const totalPages = Math.ceil(totalDocs / item_per_page);
 
             if (page > totalPages) {
                 return res.status(404).json({
@@ -41,7 +41,7 @@ export const getSubjects = async (req, res) => {
                 pagination: {
                     currentPage: Number(page),
                     totalPages: totalPages,
-                    subject_per_page: subject_per_page,
+                    item_per_page: item_per_page,
                     totalSubjects: subjects.length
                 }
             })
@@ -50,8 +50,8 @@ export const getSubjects = async (req, res) => {
         const querySubject = Subject.find();
         const subjects = await querySubject
             .clone()
-            .skip((page - 1) * subject_per_page)
-            .limit(subject_per_page);
+            .skip((page - 1) * item_per_page)
+            .limit(item_per_page);
 
         if (subjects.length === 0) {
             return res.status(404).json({
@@ -60,7 +60,7 @@ export const getSubjects = async (req, res) => {
         }
 
         const totalDocs = (await querySubject).length;
-        const totalPages = Math.ceil(totalDocs / subject_per_page);
+        const totalPages = Math.ceil(totalDocs / item_per_page);
 
         if (page > totalPages) {
             return res.status(404).json({
@@ -72,7 +72,7 @@ export const getSubjects = async (req, res) => {
             pagination: {
                 currentPage: Number(page),
                 totalPages: totalPages,
-                subject_per_page: subject_per_page,
+                item_per_page: item_per_page,
                 totalSubjects: subjects.length
             }
         })
