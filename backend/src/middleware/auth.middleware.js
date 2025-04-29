@@ -5,8 +5,8 @@ export const protectedRoute = async (req, res, next) => {
     const token = req.cookies.jwt;
     try {
         if (!token) {
-            return res.status(404).json({
-                message: "Unauthorised - Token not found - You need to be login"
+            return res.status(401).json({
+                message: "You need to login first"
             })
         }
         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);

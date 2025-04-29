@@ -1,10 +1,10 @@
-import PulseLoader from "react-spinners/PulseLoader";
+import ClipLoader from "react-spinners/ClipLoader";
 const Spinner = () => {
     return (
-        <div className="w-fit mx-auto">
-            <PulseLoader
+        <div className="text-center mt-5">
+            <ClipLoader
                 color='blue'
-                size={30}
+                size={50}
                 aria-label="Loading Spinner"
                 data-testid="loader"
             />

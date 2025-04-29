@@ -6,7 +6,7 @@ import User from "../models/user.model.js";
 export const getDepartments = async (req, res) => {
     const search = req.query.search || '';
     const page = req.query.page || 1;
-    const department_per_page = req.query.department_per_page || 3;
+    const item_per_page = req.query.item_per_page || 3;
     try {
         if (search) {
             const queryDepartment = Department.find({
@@ -19,11 +19,11 @@ export const getDepartments = async (req, res) => {
             const departments = await queryDepartment
                 .clone()
                 .select("name departmentType")
-                .skip((page - 1) * department_per_page)
-                .limit(department_per_page);
+                .skip((page - 1) * item_per_page)
+                .limit(item_per_page);
 
             const totalDocs = (await queryDepartment).length;
-            const totalPages = Math.ceil(totalDocs / department_per_page);
+            const totalPages = Math.ceil(totalDocs / item_per_page);
 
             if (departments.length === 0) {
                 return res.status(404).json({
@@ -42,7 +42,7 @@ export const getDepartments = async (req, res) => {
                 pagination: {
                     currentPage: Number(page),
                     totalPages: totalPages,
-                    department_per_page: department_per_page,
+                    item_per_page: item_per_page,
                     totalDepartments: departments.length
                 }
             })
@@ -51,11 +51,11 @@ export const getDepartments = async (req, res) => {
         const departments = await queryDepartment
             .clone()
             .select("name departmentType")
-            .skip((page - 1) * department_per_page)
-            .limit(department_per_page);
+            .skip((page - 1) * item_per_page)
+            .limit(item_per_page);
 
         const totalDocs = (await queryDepartment).length;
-        const totalPages = Math.ceil(totalDocs / department_per_page);
+        const totalPages = Math.ceil(totalDocs / item_per_page);
 
         if (departments.length === 0) {
             return res.status(404).json({
@@ -74,7 +74,7 @@ export const getDepartments = async (req, res) => {
             pagination: {
                 currentPage: Number(page),
                 totalPages: totalPages,
-                department_per_page: department_per_page,
+                item_per_page: item_per_page,
                 totalDepartments: departments.length
             }
         })

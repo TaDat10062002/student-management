@@ -124,7 +124,7 @@ export const getUsers = async (req, res) => {
 }
 
 export const createUser = async (req, res) => {
-    const { fullName, email, password } = req.body;
+    const { fullName, email, password, class_id } = req.body;
     const { userType } = req.params;
     try {
         // validate data
@@ -167,7 +167,8 @@ export const createUser = async (req, res) => {
             const newUser = new Student({
                 fullName,
                 email,
-                password: hashedPassword
+                password: hashedPassword,
+                class: class_id
             })
             await newUser.save()
             return res.status(201).json({
@@ -205,7 +206,7 @@ export const updateUser = async (req, res) => {
 
         else if (loggedUser.role === 'teacher') {
             const updatedUser = await Teacher.findByIdAndUpdate(userID,
-                { fullName, password, dob, gender, experience, department },
+                { fullName, password, dob, gender, experience },
                 { new: true })
             return res.status(200).json({
                 message: "Update information successfully",
@@ -214,8 +215,14 @@ export const updateUser = async (req, res) => {
         }
         else if (loggedUser.role === 'student') {
             const updatedUser = await Student.findByIdAndUpdate(userID,
-                { fullName, password, dob, gender, department },
-                { new: true })
+                { fullName, password, dob, gender },
+                { new: true }).populate({
+                    path: "department",
+                    select: "name -_id"
+                }).populate({
+                    path: "class",
+                    select: "name -_id"
+                })
             return res.status(200).json({
                 message: "Update information successfully",
                 updatedUser
