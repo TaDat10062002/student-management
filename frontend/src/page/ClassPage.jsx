@@ -5,7 +5,7 @@ import Pagination from '../components/Pagination';
 import Spinner from '../components/Spinner';
 
 const ClassPage = () => {
-    const { classrooms, isLoaded, getAllClasses } = useClassStore();
+    const { classrooms, pagination, isLoaded, getAllClasses } = useClassStore();
     const [searchParams] = useSearchParams();
     const search = searchParams.get('search') || '';
     const page = searchParams.get('page') || 1;
@@ -16,6 +16,7 @@ const ClassPage = () => {
 
     return (
         <>
+            <div className='text-3xl text-center mt-5'>List of classes</div>
             {
                 isLoaded ? <div className="relative overflow-x-auto shadow-md sm:rounded-lg ml-20 mr-20 mt-5">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -28,7 +29,7 @@ const ClassPage = () => {
                                     Classname
                                 </th>
                                 <th scope="col" className="px-6 py-3">
-                                    View students
+                                    View students list
                                 </th>
                             </tr>
                         </thead>
@@ -43,7 +44,7 @@ const ClassPage = () => {
                                             {classroom.name}
                                         </td>
                                         <td>
-                                            <Link to={`${classroom._id}/view`}>View student in class {classroom.name}</Link>
+                                            <Link to={`${classroom._id}/view`}>View students in class {classroom.name}</Link>
                                         </td>
                                     </tr>
                                 ))
@@ -56,7 +57,7 @@ const ClassPage = () => {
                 </div >
                     : <Spinner />
             }
-            <Pagination />
+            <Pagination pagination={pagination} />
         </>
     )
 }

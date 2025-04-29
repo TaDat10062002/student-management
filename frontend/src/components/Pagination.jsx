@@ -1,19 +1,13 @@
-import React, { useState } from 'react'
-import useClassStore from '../store/useClassStore'
+import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-
-const Pagination = () => {
-    const { pagination } = useClassStore();
-    const [searchParams, setSearchParams] = useSearchParams();
+const Pagination = ({ pagination }) => {
+    const [searchParams] = useSearchParams();
     const page = searchParams.get('page') || 1;
-    const item_per_page = searchParams.get('records_per_page') || 3;
     const totalPages = pagination.totalPages;
-
     let pages = [];
     for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
     }
-
     return (
         <div className='pagination text-center mt-5'>
             <nav aria-label="Page navigation example">

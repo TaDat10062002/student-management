@@ -7,7 +7,8 @@ import { useEffect } from "react";
 import { Loader } from "lucide-react";
 import ClassPage from "../page/ClassPage";
 import StudentClassPage from "../page/StudentClassPage";
-import TeacherPage from "../page/TeacherPage";
+import DepartmentPage from "../page/DepartmentPage";
+import TeacherDepartmentPage from "../page/TeacherDepartmentPage";
 export default function Router() {
     const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
     // phai checkAuth kiem tra xem co cookies ko, co thi call api set authUser
@@ -34,7 +35,8 @@ export default function Router() {
                     <Route path="info" element={<InfoPage />} />
                     <Route path="class" element={<ClassPage />} />
                     <Route path="class/:id/view" element={<StudentClassPage />} />
-                    <Route path="teacher" element={<TeacherPage />} />
+                    <Route path="department" element={<DepartmentPage />} />
+                    <Route path="department/:id/view" element={<TeacherDepartmentPage />} />
                 </Route>
             </Routes>
         </>
