@@ -20,9 +20,5 @@ export const destroyToken = async (res) => {
 
 export const generateCourseCode = (course) => {
     if (!course) return "1000";
-    return Number(course.course_code) + 1;
-}
-
-export const paginate = async (Model) => {
-
+    return Number(course.code) + 1;
 }

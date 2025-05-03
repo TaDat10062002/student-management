@@ -9,6 +9,7 @@ import ClassPage from "../page/ClassPage";
 import StudentClassPage from "../page/StudentClassPage";
 import DepartmentPage from "../page/DepartmentPage";
 import TeacherDepartmentPage from "../page/TeacherDepartmentPage";
+import SubjectPage from "../page/SubjectPage";
 export default function Router() {
     const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
     // phai checkAuth kiem tra xem co cookies ko, co thi call api set authUser
@@ -37,6 +38,7 @@ export default function Router() {
                     <Route path="class/:id/view" element={<StudentClassPage />} />
                     <Route path="department" element={<DepartmentPage />} />
                     <Route path="department/:id/view" element={<TeacherDepartmentPage />} />
+                    <Route path="subject" element={<SubjectPage />} />
                 </Route>
             </Routes>
         </>

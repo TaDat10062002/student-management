@@ -94,8 +94,8 @@ export const createCourse = async (req, res) => {
         const subject = await Subject.findById(new mongoose.Types.ObjectId(subjectID));
         // check course exist
         const existedCourse = await Course.findOne({
-            teacherID: teacherID,
-            subjectID: subjectID
+            teacher: teacherID,
+            subject: subjectID
         });
         if (existedCourse) {
             return res.status(400).json({
@@ -113,9 +113,9 @@ export const createCourse = async (req, res) => {
             })
         }
         const newCourse = new Course({
-            course_code: course_code,
-            teacherID: teacherID,
-            subjectID: subjectID,
+            code: course_code,
+            teacher: teacherID,
+            subject: subjectID,
             amount: amount
         })
         await newCourse.save();

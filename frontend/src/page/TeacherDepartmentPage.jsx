@@ -64,7 +64,7 @@ const TeacherDepartmentPage = () => {
                                                 {teacher.gender}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {teacher.experience > 1 ? `${teacher.experience} years ` : `${teacher.experience} year `}
+                                                {teacher.experience && `${teacher.experience > 1 ? `${teacher.experience} years` : `${teacher.experience} year`} `}
                                             </td>
                                         </tr>
                                     ))
