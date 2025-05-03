@@ -54,7 +54,7 @@ export const getAllRegisteredCourse = async (req, res) => {
                         "teacherInfo.email": 1,
                         "subjectInfo.name": 1,
                         "subjectInfo.number_of_credits": 1,
-                        _id: 0,
+                        _id: 1,
                         status: 1,
                         score: 1,
                     }
@@ -130,7 +130,7 @@ export const getAllRegisteredCourse = async (req, res) => {
                     "teacherInfo.email": 1,
                     "subjectInfo.name": 1,
                     "subjectInfo.number_of_credits": 1,
-                    _id: 0,
+                    _id: 1,
                     status: 1,
                     score: 1,
                 }
@@ -269,22 +269,10 @@ export const registerCourse = async (req, res) => {
 
 export const cancelRegisteredCourse = async (req, res) => {
     const { id: registerCourseId } = req.params;
-    const user = req.user;
     try {
-        const registeredCourse = await RegisteredCourse.findById(registerCourseId);
-        const course = await Course.findOne({ course_code: registeredCourse.course_code });
-        const subject = await Subject.findById(course.subjectID);
-        const userId = user._id.toString();
-        const studentId = registeredCourse.studentId.toString();
-        // check that userId and studentId was the same person
-        if (userId !== studentId) {
-            return res.status(403).json({
-                message: "You can't delete others Student's course"
-            })
-        }
         await RegisteredCourse.findByIdAndDelete(registerCourseId, { new: true });
         res.status(200).json({
-            message: `${user.fullName} has canceled course ${subject.name} successfully`
+            message: `Cancel course successfully`
         })
     } catch (error) {
         console.log(`Error cancelRegisteredCourse in controller ${error.message}`);

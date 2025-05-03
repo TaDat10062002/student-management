@@ -61,6 +61,7 @@ export const logout = async (req, res) => {
 
 export const checkAuth = async (req, res) => {
     try {
+        const token = req.cookies.jwt;
         const user = req.user;
         const loggedUser = await User.findOne({ email: user.email, role: user.role }).select('-password -updatedAt').populate({
             path: "department",
@@ -71,7 +72,8 @@ export const checkAuth = async (req, res) => {
         });
         return res.status(200).json({
             message: "logged user info",
-            loggedUser
+            loggedUser,
+            access_token: token
         })
     } catch (error) {
         console.log(`Error checkAuth in controller ${error.message}`);
