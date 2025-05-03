@@ -3,6 +3,7 @@ import { generateCourseCode } from "../lib/utils.js";
 import Course from "../models/course.model.js";
 import Teacher from "../models/teacher.model.js";
 import Subject from "../models/subject.model.js";
+import RegisteredCourse from "../models/registered_course.model.js";
 
 export const getAllCourse = async (req, res) => {
     const search = req.query.search || '';
@@ -32,11 +33,12 @@ export const getAllCourse = async (req, res) => {
                 }
             },
             { $unwind: '$subjectInfo' },
+
             {
                 // 1 la show 0 la hide
                 $project: {
                     _id: 0,
-                    course_code: 1,
+                    code: 1,
                     amount: 1,
                     'teacherInfo.fullName': 1,
                     'subjectInfo.name': 1,
@@ -53,6 +55,8 @@ export const getAllCourse = async (req, res) => {
                 }
             }
         ]
+
+        getCourseLimit()
         const courses = await Course.aggregate(pipeline);
         const paginatePipeline = [...pipeline];
         paginatePipeline.push({ $skip: (page - 1) * item_per_page }, { $limit: Number(item_per_page) });
@@ -66,9 +70,11 @@ export const getAllCourse = async (req, res) => {
             })
         }
 
+        const studentOfCourse = await getCourseLimit();
         // pagination later
         return res.status(200).json({
             courses: coursesPaginate,
+            studentOfCourse,
             pagination: {
                 currentPage: Number(page),
                 totalPages: totalPages,
@@ -82,6 +88,20 @@ export const getAllCourse = async (req, res) => {
         res.status(500).json({
             message: "Internal Server Error"
         })
+    }
+}
+
+export const getCourseLimit = async () => {
+    try {
+        const courses = await Course.find().sort({ code: 1 });
+        const studentOfCourse = {};
+        for (const course of courses) {
+            const count = await RegisteredCourse.find().sort({ code: 1 }).countDocuments({ course_code: course.code });
+            studentOfCourse[course.code] = count;
+        }
+        return studentOfCourse;
+    } catch (error) {
+
     }
 }
 

@@ -6,9 +6,87 @@ import Subject from "../models/subject.model.js";
 export const getAllRegisteredCourse = async (req, res) => {
     const user = req.user;
     const studentId = user._id;
+    const search = req.query.search || '';
     const page = req.query.page || 1;
     const item_per_page = req.query.item_per_page || 3;
     try {
+        if (search) {
+            // view only that student registeredCourses
+            const pipeline = [
+                {
+                    $match: { studentId: studentId }
+                },
+                // lookup course
+                {
+                    $lookup: {
+                        from: "courses",
+                        localField: "course_code",
+                        foreignField: "code",
+                        as: "courseInfo"
+                    }
+                },
+                { $unwind: '$courseInfo' },
+                // lookup teacher 
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "courseInfo.teacher",
+                        foreignField: "_id",
+                        as: "teacherInfo"
+                    }
+                },
+                { $unwind: '$teacherInfo' },
+                // lookup subject 
+                {
+                    $lookup: {
+                        from: "subjects",
+                        localField: "courseInfo.subject",
+                        foreignField: "_id",
+                        as: "subjectInfo"
+                    }
+                },
+                { $unwind: '$subjectInfo' },
+                {
+                    $project: {
+                        "courseInfo.code": 1,
+                        "courseInfo.amount": 1,
+                        "teacherInfo.fullName": 1,
+                        "teacherInfo.email": 1,
+                        "subjectInfo.name": 1,
+                        "subjectInfo.number_of_credits": 1,
+                        _id: 0,
+                        status: 1,
+                        score: 1,
+                    }
+                },
+                { $sort: { "courseInfo.code": 1 } },
+                {
+                    $match: {
+                        $or: [
+                            { "teacherInfo.fullName": { $regex: search, $options: "i" } },
+                            { "subjectInfo.name": { $regex: search, $options: "i" } },
+                        ]
+                    }
+                }
+            ]
+            const registeredCourses = await RegisteredCourse.aggregate(pipeline);
+            const paginatePipeline = [...pipeline];
+            paginatePipeline.push(
+                { $skip: (page - 1) * item_per_page },
+                { $limit: Number(item_per_page) })
+            const registeredCoursePaginate = await RegisteredCourse.aggregate(paginatePipeline);
+            const totalDocs = registeredCourses.length;
+            const totalPages = Math.ceil(totalDocs / item_per_page);
+            return res.status(200).json({
+                registeredCourses: registeredCoursePaginate,
+                pagination: {
+                    currentPage: Number(page),
+                    totalPages: totalPages,
+                    item_per_page: Number(item_per_page),
+                    totalRegisteredCourse: registeredCoursePaginate.length
+                }
+            })
+        }
         // view only that student registeredCourses
         const pipeline = [
             {
@@ -56,7 +134,8 @@ export const getAllRegisteredCourse = async (req, res) => {
                     status: 1,
                     score: 1,
                 }
-            }
+            },
+            { $sort: { "courseInfo.code": 1 } }
         ]
         const registeredCourses = await RegisteredCourse.aggregate(pipeline);
         const paginatePipeline = [...pipeline];
@@ -66,15 +145,8 @@ export const getAllRegisteredCourse = async (req, res) => {
         const registeredCoursePaginate = await RegisteredCourse.aggregate(paginatePipeline);
         const totalDocs = registeredCourses.length;
         const totalPages = Math.ceil(totalDocs / item_per_page);
-
-        if (page > totalPages) {
-            return res.status(404).json({
-                message: "Page not found!!!"
-            })
-        }
-
         return res.status(200).json({
-            registeredCoursePaginate,
+            registeredCourses: registeredCoursePaginate,
             pagination: {
                 currentPage: Number(page),
                 totalPages: totalPages,
@@ -134,7 +206,7 @@ export const registerCourse = async (req, res) => {
     const studentId = user._id;
     try {
         // check id course exist
-        const course = await Course.findOne({ course_code: course_code });
+        const course = await Course.findOne({ code: course_code });
         if (!course) {
             return res.status(404).json({
                 message: "Course not found!!!. Please make sure your course information"

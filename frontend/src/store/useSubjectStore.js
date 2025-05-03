@@ -8,7 +8,6 @@ const useSubjectStore = create((set) => ({
     pagination: {},
     isLoaded: false,
     setSubjects: () => set({ subjects }),
-
     getSubjects: async (search, page, item_per_page) => {
         set({ isLoaded: false })
         try {

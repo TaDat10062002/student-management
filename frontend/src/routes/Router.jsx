@@ -10,6 +10,9 @@ import StudentClassPage from "../page/StudentClassPage";
 import DepartmentPage from "../page/DepartmentPage";
 import TeacherDepartmentPage from "../page/TeacherDepartmentPage";
 import SubjectPage from "../page/SubjectPage";
+import CoursePage from "../page/CoursePage";
+import RegisteredCourse from "../../../backend/src/models/registered_course.model";
+import RegisteredCoursePage from "../page/RegisteredCoursePage";
 export default function Router() {
     const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
     // phai checkAuth kiem tra xem co cookies ko, co thi call api set authUser
@@ -39,6 +42,8 @@ export default function Router() {
                     <Route path="department" element={<DepartmentPage />} />
                     <Route path="department/:id/view" element={<TeacherDepartmentPage />} />
                     <Route path="subject" element={<SubjectPage />} />
+                    <Route path="course" element={<CoursePage />} />
+                    <Route path="registered-course" element={<RegisteredCoursePage />} />
                 </Route>
             </Routes>
         </>
