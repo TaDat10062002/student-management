@@ -15,26 +15,13 @@ export const getSubjects = async (req, res) => {
                     { number_of_credits: { $regex: search, $options: "i" } },
                 ]
             })
-            
+
             const subjects = await querySubject
                 .clone()
                 .skip((page - 1) * item_per_page)
                 .limit(item_per_page);
-
-            if (subjects.length === 0) {
-                return res.status(404).json({
-                    message: "No subjects was found!!!"
-                })
-            }
-
             const totalDocs = (await querySubject).length;
             const totalPages = Math.ceil(totalDocs / item_per_page);
-
-            if (page > totalPages) {
-                return res.status(404).json({
-                    message: "Page not found!!!"
-                })
-            }
 
             res.status(200).json({
                 subjects,
