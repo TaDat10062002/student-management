@@ -8,7 +8,6 @@ const useRegisteredCourseStore = create((set) => ({
     pagination: {},
     setRegisteredCourses: () => set({ registeredCourses }),
     getAllRegisteredCourses: async (search, page, item_per_page) => {
-        console.log(search);
         set({ isLoaded: false })
         try {
             const res = await axiosInstance.get(`/registered-course?search=${search}&page=${page}&item_per_page=${item_per_page}`);
@@ -18,6 +17,24 @@ const useRegisteredCourseStore = create((set) => ({
         } catch (error) {
             console.log(`Error in getAllRegisteredCourses ${error}`);
             toast.error(error.response.data.message);
+        }
+    },
+    cancelRegisteredCourse: async (registeredCourseId, token, search, page, item_per_page) => {
+        try {
+            const res = await axiosInstance.delete(
+                `/registered-course/${registeredCourseId}`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            )
+            toast.success(res.data.message);
+            useRegisteredCourseStore.getState().getAllRegisteredCourses(search, page, item_per_page)
+        } catch (error) {
+            console.log(`Error in cancelRegisteredCourse ${error}`);
+            // toast.error(error.response.data.message);
         }
     }
 }))

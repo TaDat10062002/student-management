@@ -1,14 +1,16 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import useAuthStore from '../store/useAuthStore'
 import { Toaster } from 'react-hot-toast';
+import getCurrentUrl from '../lib/util';
 
 const Navbar = () => {
-    const { logout } = useAuthStore();
+    const { logout, authUser } = useAuthStore();
     const [isClicked, setIsClicked] = useState(false);
     const handleLogout = async () => {
         logout();
     }
+    const active = 'bg-white text-yellow-500';
     return (
         <>
             <Toaster position='top-center' reverseOrder={false} toastOptions={{
@@ -33,29 +35,38 @@ const Navbar = () => {
                             </button>
                         </div>
                         <div className="flex mx-auto gap-15">
-                            <Link to={'/students'}>
+                            <Link to={'/info'}>
                                 <img className="h-8 w-auto rounded-2xl" src="/public/img/logo.png" alt="Your Company" />
                             </Link>
                             <div className='max-sm:hidden'>
-                                <Link to={'/class'} className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Class</Link>
+                                <Link to={'/class'} className={`rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white hover:text-yellow-500
+                                    ${getCurrentUrl() === 'class' ? active : ''}`}>Class</Link>
                             </div>
                             <div className='max-sm:hidden'>
-                                <Link to={'/department'} className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Department</Link>
+                                <Link to={'/department'} className={`rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white hover:text-yellow-500
+                                      ${getCurrentUrl() === 'department' ? active : ''}
+                                      `}>Department</Link>
                             </div>
                             <div className='max-sm:hidden'>
-                                <Link to={'/subject'} href="#" className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Subjects</Link>
+                                <Link to={'/subject'} className={`rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white hover:text-yellow-500
+                                      ${getCurrentUrl() === 'subject' ? active : ''}
+                                    `}>Subjects</Link>
                             </div>
                             <div className='max-sm:hidden'>
-                                <Link to={'/course'} href="#" className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Courses</Link>
+                                <Link to={'/course'} className={`rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white hover:text-yellow-500
+                                      ${getCurrentUrl() === 'course' ? active : ''}
+                                    `}>Courses</Link>
                             </div>
                             <div className='max-sm:hidden'>
-                                <Link to={'/registered-course'} href="#" className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Registered Course</Link>
+                                <Link to={'/registered-course'} className={`rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white hover:text-yellow-500
+                                      ${getCurrentUrl() === 'registered-course' ? active : ''}
+                                    `}>Registered Course</Link>
                             </div>
                             <div className='max-sm:hidden'>
-                                <Link to={'/info'} className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white" aria-current="page">Info settings</Link>
+                                <Link to={'/info'} className={`rounded-md font-medium text-gray-300 hover:bg-white hover:text-yellow-500 px-3 py-2  ${getCurrentUrl() === 'info' ? active : ''}`} >Welcomes {authUser.fullName}</Link>
                             </div>
                             <div className='max-sm:hidden'>
-                                <Link onClick={handleLogout} className="rounded-md text-gray-900 px-3 py-2 text-sm font-medium bg-white" aria-current="page">Logout</Link>
+                                <Link onClick={handleLogout} className="rounded-md bg-red-600 hover:bg-red-400 text-white px-3 py-2 text-sm font-medium ">Logout</Link>
                             </div>
                         </div>
                     </div>
@@ -66,13 +77,13 @@ const Navbar = () => {
                         <div className='sm:hidden' id="mobile-menu">
                             <div className="space-y-1 px-2 pt-2 pb-3">
                                 {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
-                                <Link to="/class" className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Class</Link>
-                                <Link to="/department" className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Department</Link>
-                                <Link to="/subject" className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Subjects</Link>
-                                <Link to="/course" className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Courses</Link>
-                                <Link to="/registered-course" className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white" aria-current="page">Registered Courses</Link>
-                                <Link to="/info" className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white" aria-current="page">Info</Link>
-                                <Link onClick={handleLogout} className="block rounded-md text-gray-900 px-3 py-2 text-base font-medium bg-white" aria-current="page">Logout</Link>
+                                <Link to="/class" className={`block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white hover:text-yellow-500 ${getCurrentUrl() === 'class' ? active : ''} `}>Class</Link>
+                                <Link to="/department" className={` block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white hover:text-yellow-500 ${getCurrentUrl() === 'department' ? active : ''} `}>Department</Link>
+                                <Link to="/subject" className={` block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white hover:text-yellow-500 ${getCurrentUrl() === 'subject' ? active : ''} `}>Subjects</Link>
+                                <Link to="/course" className={` block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white hover:text-yellow-500 ${getCurrentUrl() === 'course' ? active : ''} `}>Courses</Link>
+                                <Link to="/registered-course" className={` block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white hover:text-yellow-500 ${getCurrentUrl() === 'registered-course' ? active : ''}`}>Registered Courses</Link>
+                                <Link to="/info" className={` block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white hover:text-yellow-500 ${getCurrentUrl() === 'info' ? active : ''}`}>Info</Link>
+                                <Link onClick={handleLogout} className="block rounded-md px-3 py-2 text-base font-medium bg-red-600 text-white hover:bg-red-400" aria-current="page">Logout</Link>
                             </div>
                         </div> : ''
                 }
