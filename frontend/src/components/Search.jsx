@@ -11,7 +11,7 @@ const Search = () => {
 
     return (
         <>
-            <form className="w-1/3 ml-20 mt-5">
+            <form className="md:w-1/2 md:ml-20 mt-5">
                 <label className="text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
                 <div className="relative">
                     <div className="absolute inset-y-0 start-0 flex items-center ps-3">

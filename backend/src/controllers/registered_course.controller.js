@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import Course from "../models/course.model.js";
 import RegisteredCourse from "../models/registered_course.model.js";
-import Subject from "../models/subject.model.js";
 
 export const getAllRegisteredCourse = async (req, res) => {
     const user = req.user;
@@ -70,13 +69,14 @@ export const getAllRegisteredCourse = async (req, res) => {
                 }
             ]
             const registeredCourses = await RegisteredCourse.aggregate(pipeline);
+            const totalDocs = registeredCourses.length;
+            const totalPages = Math.ceil(totalDocs / item_per_page);
             const paginatePipeline = [...pipeline];
             paginatePipeline.push(
                 { $skip: (page - 1) * item_per_page },
                 { $limit: Number(item_per_page) })
             const registeredCoursePaginate = await RegisteredCourse.aggregate(paginatePipeline);
-            const totalDocs = registeredCourses.length;
-            const totalPages = Math.ceil(totalDocs / item_per_page);
+
             return res.status(200).json({
                 registeredCourses: registeredCoursePaginate,
                 pagination: {
@@ -281,3 +281,4 @@ export const cancelRegisteredCourse = async (req, res) => {
         })
     }
 }
+

@@ -5,6 +5,6 @@ const routers = express.Router();
 
 routers.get('/', protectedRoute, requireAdminOrStudent, getAllRegisteredCourse); // 3 roles
 routers.post('/:id', protectedRoute, requireStudent, registerCourse);  // student
-routers.put('/:id/edit', protectedRoute, requireTeacher, updateScore);  // teacher
+routers.put('/:id/edit-score', protectedRoute, requireTeacher, updateScore);  // teacher
 routers.delete('/:id', protectedRoute, requireStudent, cancelRegisteredCourse); // student
 export default routers;

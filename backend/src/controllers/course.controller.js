@@ -55,7 +55,6 @@ export const getAllCourse = async (req, res) => {
                 }
             }
         ]
-
         getCourseLimit()
         const courses = await Course.aggregate(pipeline);
         const paginatePipeline = [...pipeline];
@@ -63,13 +62,6 @@ export const getAllCourse = async (req, res) => {
         const coursesPaginate = await Course.aggregate(paginatePipeline);
         const totalDocs = courses.length;
         const totalPages = Math.ceil(totalDocs / item_per_page);
-
-        if (page > totalPages) {
-            return res.status(404).json({
-                message: "Page not found!!!!"
-            })
-        }
-
         const studentOfCourse = await getCourseLimit();
         // pagination later
         return res.status(200).json({
@@ -112,16 +104,6 @@ export const createCourse = async (req, res) => {
         const course_code = generateCourseCode(course);
         const teacher = await Teacher.findById(new mongoose.Types.ObjectId(teacherID));
         const subject = await Subject.findById(new mongoose.Types.ObjectId(subjectID));
-        // check course exist
-        const existedCourse = await Course.findOne({
-            teacher: teacherID,
-            subject: subjectID
-        });
-        if (existedCourse) {
-            return res.status(400).json({
-                message: "This course already exists. Create another one!!!"
-            })
-        }
         if (!teacher || !subject) {
             return res.status(404).json({
                 message: "Teacher or Subject were not found!!!"
@@ -187,6 +169,181 @@ export const deleteCourse = async (req, res) => {
         })
     } catch (error) {
         console.log(`Error deleteCourse in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+export const getTeacherCourses = async (req, res) => {
+    const teacherId = req.user._id;
+    const item_per_page = req.query.item_per_page || 3;
+    const page = req.query.page || 1;
+    try {
+        const pipeline = [
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "teacher",
+                    foreignField: "_id",
+                    as: "teacherInfo",
+                }
+            },
+            { $unwind: "$teacherInfo" },
+            {
+                $lookup: {
+                    from: "subjects",
+                    localField: "subject",
+                    foreignField: "_id",
+                    as: "subjectInfo",
+                }
+            },
+            { $unwind: "$subjectInfo" },
+            {
+                $project: {
+                    'teacherInfo._id': 1,
+                    'teacherInfo.fullName': 1,
+                    'subjectInfo.name': 1,
+                    'subjectInfo.number_of_credits': 1,
+                    code: 1,
+                }
+            },
+            {
+                $match: {
+                    "teacherInfo._id": teacherId
+                }
+            }
+        ]
+        const teacherCourses = await Course.aggregate(pipeline);
+        const totalDocs = teacherCourses.length;
+        const totalPages = Math.ceil(totalDocs / item_per_page);
+        const paginatePipeline = [...pipeline];
+        paginatePipeline.push(
+            {
+                $skip: (page - 1) * item_per_page
+            },
+            {
+                $limit: item_per_page
+            }
+        )
+        const tearcherCoursesPaginate = await Course.aggregate(paginatePipeline)
+        return res.status(200).json({
+            teacherCourses: tearcherCoursesPaginate,
+            pagination: {
+                currentPage: Number(page),
+                totalPages: totalPages,
+                item_per_page: item_per_page,
+                totalCourses: teacherCourses.length
+            }
+        })
+    } catch (error) {
+        console.log(`Error getTeacherCourses in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+export const getStudentInTeacherCourse = async (req, res) => {
+    const { id: course_code } = req.params;
+    const page = req.query.page || 1;
+    const item_per_page = req.query.item_per_page || 3;
+    try {
+        const pipeline = [
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "studentId",
+                    foreignField: "_id",
+                    as: "studentInfo"
+                }
+            },
+            { $unwind: "$studentInfo" },
+            {
+                $lookup: {
+                    from: "departments",
+                    localField: "studentInfo.department",
+                    foreignField: "_id",
+                    as: "departmentInfo"
+                }
+            },
+            { $unwind: "$departmentInfo" },
+            {
+                $lookup: {
+                    from: "classrooms",
+                    localField: "studentInfo.class",
+                    foreignField: "_id",
+                    as: "classInfo"
+                }
+            },
+            { $unwind: "$classInfo" },
+            {
+                $lookup: {
+                    from: "courses",
+                    localField: "course_code",
+                    foreignField: "code",
+                    as: "coursesInfo"
+                }
+            },
+            { $unwind: "$coursesInfo" },
+            {
+                $lookup: {
+                    from: "courses",
+                    localField: "course_code",
+                    foreignField: "code",
+                    as: "courseInfo"
+                }
+            },
+            { $unwind: "$courseInfo" },
+            {
+                $lookup: {
+                    from: "subjects",
+                    localField: "courseInfo.subject",
+                    foreignField: "_id",
+                    as: "subjectInfo"
+                }
+            },
+            { $unwind: "$subjectInfo" },
+            {
+                $project: {
+                    course_code: 1,
+                    _id: 1,
+                    score: 1,
+                    "studentInfo.fullName": 1,
+                    "studentInfo.email": 1,
+                    "studentInfo.gender": 1,
+                    "departmentInfo.name": 1,
+                    "classInfo.name": 1,
+                    "courseInfo.subject": 1,
+                    "subjectInfo.name": 1,
+                }
+            },
+            {
+                $match: { course_code: course_code }
+            }
+        ];
+        const students = await RegisteredCourse.aggregate(pipeline);
+        const paginatePipeLine = [...pipeline];
+        paginatePipeLine.push(
+            { $skip: (page - 1) * item_per_page },
+            { $limit: item_per_page },
+        )
+        const studentsPaginate = await RegisteredCourse.aggregate(paginatePipeLine);
+        const totalDocs = students.length;
+        const totalPages = Math.ceil(totalDocs / item_per_page);
+
+        return res.status(200).json({
+            students: studentsPaginate,
+            pagination: {
+                currentPage: Number(page),
+                totalPages: totalPages,
+                item_per_page: item_per_page,
+                totalStudents: students.length
+            }
+        })
+
+    } catch (error) {
+        console.log(`Error getStudentInTeacherCourse in controller ${error.message}`);
         res.status(500).json({
             message: "Internal Server Error"
         })
