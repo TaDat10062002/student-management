@@ -7,13 +7,15 @@ const useAuthStore = create((set) => ({
     token: null,
     isLoggingIn: false,
     isCheckingAuth: true,
+    isLoaded: false,
     isUpdating: false,
     setAuthUser: (authUser) => set({ authUser }),
     checkAuth: async () => {
+        set({ isLoaded: false })
         try {
             const res = await axiosInstance.get('/auth/check');
             set({ authUser: res.data.loggedUser });
-            set({ token: res.data.access_token });
+            set({ isLoaded: true });
         } catch (error) {
             console.log(`Error in checkAuth ${error}`);
             // su dung id de phan biet cac toast voi nhau
@@ -58,6 +60,7 @@ const useAuthStore = create((set) => ({
             const res = await axiosInstance.put(`/user/${userId}/edit`, data);
             set({ authUser: res.data.updatedUser })
             toast.success(res.data.message);
+            useAuthStore.getState().checkAuth()
         } catch (error) {
             console.log(`Error in updateUser ${error}`);
             toast.error(error.response.data.message);

@@ -1,102 +1,98 @@
 import React, { useEffect, useState } from 'react'
-import useCourseStore from '../store/useCourseStore';
-import useAuthStore from '../store/useAuthStore';
+import useCourseStore from '../store/useCourseStore'
 import Spinner from '../components/Spinner';
+import { useParams } from 'react-router-dom';
 import Pagination from '../components/Pagination';
-import { Link, useSearchParams } from 'react-router-dom';
-import Modal from '../components/Modal';
+import ScoreModal from '../components/ScoreModal';
+import toast from 'react-hot-toast';
 
-const CoursePage = () => {
-    const { courses, isLoaded, studentOfCourse, pagination, getAllCourses, registerCourse, } = useCourseStore();
-    const [searchParams] = useSearchParams();
-    const search = searchParams.get('search') || '';
-    const page = searchParams.get('page') || 1;
-    const item_per_page = searchParams.get('item_per_page') || 3;
+const StudentInTeacherCoursePage = () => {
+    const { getStudentInTeacherCourse, students, course, isLoaded, pagination, updateStudentScore } = useCourseStore();
     const [isOpen, setIsOpen] = useState(false);
-    const [courseId, setCourseId] = useState('');
-
+    const [registeredCourseId, setRegisteredCourseId] = useState('');
+    const { course_code } = useParams();
     useEffect(() => {
-        getAllCourses(search, page, item_per_page)
-    }, [search, page, item_per_page]);
+        getStudentInTeacherCourse(course_code)
+    }, [getStudentInTeacherCourse, course_code])
 
-    const handleModal = (e) => {
-        e.preventDefault();
-        setIsOpen(true);
-    }
-
-    const handleClose = (e) => {
-        e.preventDefault();
+    const handleUpdateScore = (score) => {
+        if (score > 10 || score < 0) {
+            setIsOpen(false);
+            toast.error("Score must be from 0 - 10");
+            return;
+        }
+        updateStudentScore(registeredCourseId, score, course_code);
         setIsOpen(false);
+        return;
     }
-
-    const handleRegister = (e) => {
-        const course_code = e.target.value;
-        registerCourse(course_code);
+    const handleClose = () => {
+        setIsOpen(false)
     }
 
     return (
         <>
-            <div className='text-3xl text-center mt-5'>List of courses</div>
+            <div className='text-3xl text-center mt-5'>List of students {course} </div>
             {
                 isLoaded ?
-                    <div className={`relative overflow-x-auto shadow-md sm:rounded-lg ml-20 mr-20 mt-5 ${isOpen ? 'blur-xs' : ''} `}>
+                    <div className="relative overflow-x-auto shadow-md sm:rounded-lg ml-20 mr-20 mt-5">
                         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
                                     <th scope="col" className="px-6 py-3">
-                                        Course number
+                                        Student number
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Course code
+                                        Fullname
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Teacher
+                                        Email
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Subject
+                                        Gender
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Number of credits
+                                        Department
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Amount
+                                        Class
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Realistic amount
+                                        Score
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Register this course
+                                        Action
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {
-                                    courses.map((course, index) => (
+                                    students.map((student, index) => (
                                         <tr key={index} className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200" >
                                             <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                                 {index + 1}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {course.code}
+                                                {student.studentInfo.fullName}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {course.teacherInfo.fullName}
+                                                {student.studentInfo.email}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {course.subjectInfo.name}
+                                                {student.studentInfo.gender}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {course.subjectInfo.number_of_credits}
+                                                {student.departmentInfo.name}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {course.amount} students
+                                                {student.classInfo.name}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {studentOfCourse[course.code]}/{course.amount} students
+                                                {
+                                                    student.score || 'N/A'}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <button onClick={(e) => { handleModal(e), setCourseId(course.code) }} className="block bg-green-400 text-black px-3 py-3 rounded-md" type="button">
-                                                    Register course
+                                                <button onClick={() => { setIsOpen(true), setRegisteredCourseId(student._id) }} data-modal-target="authentication-modal" data-modal-toggle="authentication-modal" className="bg-yellow-400 text-black p-3 rounded-2xl cursor-pointer" type="button">
+                                                    Update score
                                                 </button>
                                             </td>
                                         </tr>
@@ -105,14 +101,15 @@ const CoursePage = () => {
                             </tbody>
                         </table>
                         <div className='text-lg font-medium p-3'>
-                            Totals: {courses.length}
+                            Totals: {students.length}
                         </div>
-                    </div > : <Spinner />
+                    </div >
+                    : <Spinner />
             }
-            <Modal isOpen={isOpen} handleClose={handleClose} courseId={courseId} handleRegister={handleRegister} />
+            <ScoreModal isOpen={isOpen} handleClose={handleClose} handleUpdateScore={handleUpdateScore} />
             <Pagination pagination={pagination} />
         </>
     )
 }
 
-export default CoursePage
+export default StudentInTeacherCoursePage
