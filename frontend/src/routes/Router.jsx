@@ -15,6 +15,7 @@ import RegisteredCoursePage from "../page/RegisteredCoursePage";
 import StudentPage from "../page/StudentPage";
 import TeacherCoursePage from "../page/TeacherCoursePage";
 import StudentInTeacherCoursePage from "../page/StudentInTeacherCoursePage";
+import PageNotFound from "../page/PageNotFound";
 export default function Router() {
     const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
     // phai checkAuth kiem tra xem co cookies ko, co thi call api set authUser
@@ -49,6 +50,7 @@ export default function Router() {
                         <Route path="teacher-course" element={<TeacherCoursePage />} />
                         <Route path="teacher-course/:course_code/view-students" element={<StudentInTeacherCoursePage />} />
                     </Route>
+                    <Route path="*" element={<PageNotFound />} />
                 </Routes>
             </>
         )
@@ -71,6 +73,7 @@ export default function Router() {
                     <Route path="course" element={<CoursePage />} />
                     <Route path="registered-course" element={<RegisteredCoursePage />} />
                 </Route>
+                <Route path="*" element={<PageNotFound />} />
             </Routes>
         </>
     )
