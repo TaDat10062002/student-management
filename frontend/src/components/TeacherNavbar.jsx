@@ -5,9 +5,10 @@ import { Link } from 'react-router-dom';
 import useAuthStore from '../store/useAuthStore';
 
 const TeacherNavbar = () => {
-    const { logout, authUser } = useAuthStore();
+    const { logout } = useAuthStore();
     const [isClicked, setIsClicked] = useState(false);
-    const handleLogout = async () => {
+    const handleLogout = async (e) => {
+        e.preventDefault();
         logout();
     }
     const active = 'bg-white text-yellow-500';
@@ -21,7 +22,7 @@ const TeacherNavbar = () => {
             <nav className="bg-blue-800">
                 <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
                     <div className="relative flex h-16 items-center justify-between">
-                        <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+                        <div className="absolute inset-y-0 left-0 flex items-center lg:hidden">
                             {/* Mobile menu button*/}
                             <button type="button" onClick={() => { isClicked ? setIsClicked(false) : setIsClicked(true) }} className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white focus:outline-hidden focus:ring-inset" aria-controls="mobile-menu" aria-expanded="false">
                                 <span className="absolute -inset-0.5" />
@@ -34,7 +35,7 @@ const TeacherNavbar = () => {
                                 </svg>
                             </button>
                         </div>
-                        <div className="flex mx-auto gap-10 space-x-10 max-lg:-space-x-5">
+                        <div className="flex flex-nowrap whitespace-nowrap mx-auto md:gap-8 max-lg:hidden">
                             <Link to={'/info'}>
                                 <img className="max-md:hidden h-8 w-auto rounded-2xl" src="/public/img/logo.png" alt="Your Company" />
                             </Link>
@@ -65,9 +66,9 @@ const TeacherNavbar = () => {
                                 <Link to={'/info'} className={`max-lg:text-xs rounded-md font-medium text-gray-300 hover:bg-white hover:text-yellow-500 px-2 py-2  ${getCurrentUrl() === 'info' ? active : ''}`} >Info page</Link>
                             </div>
                             <div className='max-sm:hidden'>
-                                <Link onClick={handleLogout} className="max-lg:text-xs max-lg:gap-x-0.5 rounded-md bg-red-600 hover:bg-red-400 text-white px-3 py-2 text-sm font-medium ">
+                                <button onClick={(e) => handleLogout(e)} className="cursor-pointer max-lg:text-xs max-lg:gap-x-0.5 rounded-md bg-red-600 hover:bg-red-400 text-white h-10 -mt-2.5 px-3 text-sm font-medium ">
                                     Logout
-                                </Link>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -75,7 +76,7 @@ const TeacherNavbar = () => {
                 {/* Mobile menu, show/hide based on menu state. */}
                 {
                     isClicked ?
-                        <div className='md:hidden' id="mobile-menu">
+                        <div className='lg:hidden' id="mobile-menu">
                             <div className="space-y-1 px-2 pt-2 pb-3">
                                 {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
                                 <Link to="/department" className={` block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white hover:text-yellow-500 ${getCurrentUrl() === 'department' ? active : ''} `}>Department</Link>
@@ -84,7 +85,7 @@ const TeacherNavbar = () => {
                                 <Link to="/subject" className={` block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white hover:text-yellow-500 ${getCurrentUrl() === 'subject' ? active : ''} `}>Subject</Link>
                                 <Link to="/teacher-course" className={` block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white hover:text-yellow-500 ${getCurrentUrl() === 'teacher-course' ? active : ''} `}>Teacher course</Link>
                                 <Link to="/info" className={`block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white hover:text-yellow-500 ${getCurrentUrl() === 'info' ? active : ''}`}>Info</Link>
-                                <Link onClick={handleLogout} className="block rounded-md px-3 py-2 text-base font-medium bg-red-600 text-white hover:bg-red-400" aria-current="page">Logout</Link>
+                                <button onClick={(e) => handleLogout(e)} className="cursor-pointer block mt-2 rounded-md px-3 mx-auto w-full py-2 text-base font-medium bg-red-600 text-white hover:bg-red-400">Logout</button>
                             </div>
                         </div> : ''
                 }

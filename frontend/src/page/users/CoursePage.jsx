@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import useCourseStore from '../store/useCourseStore';
-import useAuthStore from '../store/useAuthStore';
-import Spinner from '../components/Spinner';
-import Pagination from '../components/Pagination';
+import useCourseStore from '../../store/useCourseStore';
+import useAuthStore from '../../store/useAuthStore';
+import Spinner from '../../components/Spinner';
+import Pagination from '../../components/Pagination';
 import { Link, useSearchParams } from 'react-router-dom';
-import Modal from '../components/Modal';
+import Modal from '../../components/Modal';
 
 const CoursePage = () => {
     const { courses, isLoaded, studentOfCourse, pagination, getAllCourses, registerCourse, } = useCourseStore();

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import useCourseStore from '../store/useCourseStore';
 
-const ScoreModal = ({ isOpen, handleClose, handleUpdateScore }) => {
+const ScoreModal = ({ isOpen, handleClose, handleUpdateScore, student }) => {
     const [score, setScore] = useState();
     return (
         <>
@@ -25,7 +25,7 @@ const ScoreModal = ({ isOpen, handleClose, handleUpdateScore }) => {
                             <form className="space-y-4">
                                 <div>
                                     <label className="block mb-2 text-center text-sm font-medium text-gray-900 dark:text-white">Score</label>
-                                    <input type="number" min={0} max={10} name='score' onChange={(e) => setScore(e.target.value)} className=" text-sm rounded-lg  w-full p-2.5 dark:text-black dark:border-gray-500 dark:placeholder-black bg-white" placeholder="Student's score" />
+                                    <input type="number" min={0} max={10} name='score' defaultValue={student.score} onChange={(e) => setScore(e.target.value)} className=" text-sm rounded-lg  w-full p-2.5 dark:text-black dark:border-gray-500 dark:placeholder-black bg-white" placeholder="Student's score" />
                                 </div>
                                 <button onClick={(e) => { handleClose, handleUpdateScore(score) }} type="button" className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save changes</button>
                             </form>
@@ -33,8 +33,6 @@ const ScoreModal = ({ isOpen, handleClose, handleUpdateScore }) => {
                     </div>
                 </div>
             </div >
-
-
         </>
     )
 }

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import useCourseStore from '../store/useCourseStore'
-import Spinner from '../components/Spinner';
+import useCourseStore from '../../store/useCourseStore'
+import Spinner from '../../components/Spinner';
 import { useParams } from 'react-router-dom';
-import Pagination from '../components/Pagination';
-import ScoreModal from '../components/ScoreModal';
+import Pagination from '../../components/Pagination';
+import ScoreModal from '../../components/ScoreModal';
 import toast from 'react-hot-toast';
 
 const StudentInTeacherCoursePage = () => {
@@ -15,6 +15,7 @@ const StudentInTeacherCoursePage = () => {
         getStudentInTeacherCourse(course_code)
     }, [getStudentInTeacherCourse, course_code])
 
+    const [student, setStudent] = useState('');
     const handleUpdateScore = (score) => {
         if (score > 10 || score < 0) {
             setIsOpen(false);
@@ -91,7 +92,7 @@ const StudentInTeacherCoursePage = () => {
                                                     student.score || 'N/A'}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <button onClick={() => { setIsOpen(true), setRegisteredCourseId(student._id) }} data-modal-target="authentication-modal" data-modal-toggle="authentication-modal" className="bg-yellow-400 text-black p-3 rounded-2xl cursor-pointer" type="button">
+                                                <button onClick={() => { setIsOpen(true), setRegisteredCourseId(student._id), setStudent(student) }} data-modal-target="authentication-modal" data-modal-toggle="authentication-modal" className="bg-yellow-400 text-black p-3 rounded-2xl cursor-pointer" type="button">
                                                     Update score
                                                 </button>
                                             </td>
@@ -106,7 +107,7 @@ const StudentInTeacherCoursePage = () => {
                     </div >
                     : <Spinner />
             }
-            <ScoreModal isOpen={isOpen} handleClose={handleClose} handleUpdateScore={handleUpdateScore} />
+            <ScoreModal isOpen={isOpen} handleClose={handleClose} handleUpdateScore={handleUpdateScore} student={student} />
             <Pagination pagination={pagination} />
         </>
     )

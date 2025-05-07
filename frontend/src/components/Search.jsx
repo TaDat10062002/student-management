@@ -8,7 +8,6 @@ const Search = () => {
         e.preventDefault();
         setSearchParams(`?search=${e.target.value}`);
     }
-
     return (
         <>
             <form className="md:w-1/2 md:ml-20 mt-5">

@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
-import useClassStore from '../store/useClassStore'
+import useClassStore from '../../store/useClassStore'
 import { Link, useSearchParams } from 'react-router-dom';
-import Pagination from '../components/Pagination';
-import Spinner from '../components/Spinner';
+import Pagination from '../../components/Pagination';
+import Spinner from '../../components/Spinner';
 
 const ClassPage = () => {
     const { classrooms, pagination, isLoaded, getAllClasses } = useClassStore();

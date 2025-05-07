@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import useAuthStore from '../store/useAuthStore';
+import useAuthStore from '../../store/useAuthStore';
 import { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 const LoginPage = () => {
