@@ -10,7 +10,7 @@ export const getUsers = async (req, res) => {
     const search = req.query.search || '';
     const departmentID = req.query.departmentID || null;
     const page = req.query.page || 1;
-    const user_per_page = req.query.user_per_page || 3;
+    const item_per_page = req.query.item_per_page || 3;
     // su dung clone de ko can lap lai query 
     try {
         if (departmentID) {
@@ -60,11 +60,11 @@ export const getUsers = async (req, res) => {
             const users = await queryUser
                 .clone()
                 .select("fullName email gender role department")
-                .skip((page - 1) * user_per_page)
-                .limit(user_per_page);
+                .skip((page - 1) * item_per_page)
+                .limit(item_per_page);
 
             const totalDocs = (await queryUser).length;
-            const totalPages = Math.ceil(totalDocs / user_per_page);
+            const totalPages = Math.ceil(totalDocs / item_per_page);
 
             if (page > totalPages) {
                 return res.status(404).json({
@@ -77,40 +77,27 @@ export const getUsers = async (req, res) => {
                 pagination: {
                     currentPage: Number(page),
                     totalPages: totalPages,
-                    user_per_page: user_per_page,
+                    item_per_page: item_per_page,
                     totalUsers: users.length,
                 }
             })
         }
-
         const queryUser = User.find();
         const users = await queryUser
             .clone()
             .select("fullName email role gender department")
-            .skip((page - 1) * user_per_page)
-            .limit(user_per_page);
+            .skip((page - 1) * item_per_page)
+            .limit(item_per_page);
 
         const totalDocs = (await queryUser).length;
-        const totalPages = Math.ceil(totalDocs / user_per_page);
-
-        if (users.length === 0) {
-            return res.status(404).json({
-                message: "No users was found!!!"
-            })
-        }
-
-        if (page > totalPages) {
-            return res.status(404).json({
-                message: "Page not found!!!"
-            })
-        }
+        const totalPages = Math.ceil(totalDocs / item_per_page);
 
         res.status(200).json({
             users,
             pagination: {
                 currentPage: Number(page),
                 totalPages: totalPages,
-                user_per_page: user_per_page,
+                item_per_page: item_per_page,
                 totalUsers: users.length
             }
         })
@@ -169,6 +156,7 @@ export const createUser = async (req, res) => {
                 fullName,
                 email,
                 password: hashedPassword,
+                department: department_id,
                 class: class_id
             })
             await newUser.save()

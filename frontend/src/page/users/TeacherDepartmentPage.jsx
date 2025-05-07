@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
-import Spinner from '../components/Spinner'
-import Pagination from '../components/Pagination'
-import useDepartmentStore from '../store/useDepartmentStore'
+import Spinner from '../../components/Spinner'
+import Pagination from '../../components/Pagination'
+import useDepartmentStore from '../../store/useDepartmentStore'
 
 const TeacherDepartmentPage = () => {
     const { id } = useParams();

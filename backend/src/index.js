@@ -10,6 +10,7 @@ import courseRoute from "./routes/course.route.js";
 import registeredCourseRoute from "./routes/registered_course.js";
 import classRoute from "./routes/class.route.js";
 import studentRoute from "./routes/student.route.js";
+import dashBoardRoute from "./routes/dashboard.route.js";
 import cors from "cors";
 dotenv.config();
 const PORT = process.env.PORT;
@@ -37,6 +38,7 @@ app.use("/api/student/", studentRoute);
 app.use("/api/class/", classRoute);
 app.use("/api/course/", courseRoute);
 app.use("/api/registered-course/", registeredCourseRoute);
+app.use("/api/dashboard", dashBoardRoute);
 
 app.listen(PORT, () => {
     connectDB(MONGODB_URI)

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import useRegisteredCourseStore from '../store/useRegisteredCourseStore'
-import Pagination from '../components/Pagination';
-import Spinner from '../components/Spinner';
+import useRegisteredCourseStore from '../../store/useRegisteredCourseStore'
+import Pagination from '../../components/Pagination';
+import Spinner from '../../components/Spinner';
 import { useSearchParams } from 'react-router-dom';
-import CancelModal from '../components/CancelModal';
-import useAuthStore from '../store/useAuthStore';
+import CancelModal from '../../components/CancelModal';
+import useAuthStore from '../../store/useAuthStore';
 
 const RegisteredCoursePage = () => {
     const { registeredCourses, isLoaded, pagination, getAllRegisteredCourses, cancelRegisteredCourse } = useRegisteredCourseStore();

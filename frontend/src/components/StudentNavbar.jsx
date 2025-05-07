@@ -21,9 +21,9 @@ const StudentNavbar = () => {
             <nav className="bg-blue-800">
                 <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
                     <div className="relative flex h-16 items-center justify-between">
-                        <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+                        <div className="absolute inset-y-0 left-0 flex items-center lg:hidden">
                             {/* Mobile menu button*/}
-                            <button type="button" onClick={() => { isClicked ? setIsClicked(false) : setIsClicked(true) }} className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white focus:outline-hidden focus:ring-inset" aria-controls="mobile-menu" aria-expanded="false">
+                            <button type="button" onClick={() => { isClicked ? setIsClicked(false) : setIsClicked(true) }} className="cursor-pointer relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white focus:outline-hidden focus:ring-inset" aria-controls="mobile-menu" aria-expanded="false">
                                 <span className="absolute -inset-0.5" />
                                 <span className="sr-only">Open main menu</span>
                                 <svg className="block size-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
@@ -34,39 +34,39 @@ const StudentNavbar = () => {
                                 </svg>
                             </button>
                         </div>
-                        <div className="flex mx-auto gap-15">
+                        <div className="flex flex-nowrap whitespace-nowrap mx-auto md:gap-8 max-lg:hidden">
                             <Link to={'/info'}>
-                                <img className="h-8 w-auto rounded-2xl" src="/public/img/logo.png" alt="Your Company" />
+                                <img className="h-8 w-auto rounded-2xl max-lg:hidden" src="/public/img/logo.png" alt="Your Company" />
                             </Link>
                             <div className='max-sm:hidden'>
-                                <Link to={'/class'} className={`rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white hover:text-yellow-500
+                                <Link to={'/class'} className={`rounded-md px-3 py-2 md:text-sm font-medium text-gray-300 hover:bg-white hover:text-yellow-500
                                     ${getCurrentUrl() === 'class' ? active : ''}`}>Class</Link>
                             </div>
                             <div className='max-sm:hidden'>
-                                <Link to={'/department'} className={`rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white hover:text-yellow-500
+                                <Link to={'/department'} className={`rounded-md px-3 py-2 md:text-sm font-medium text-gray-300 hover:bg-white hover:text-yellow-500
                                       ${getCurrentUrl() === 'department' ? active : ''}
                                       `}>Department</Link>
                             </div>
                             <div className='max-sm:hidden'>
-                                <Link to={'/subject'} className={`rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white hover:text-yellow-500
+                                <Link to={'/subject'} className={`rounded-md px-3 py-2 md:text-sm font-medium text-gray-300 hover:bg-white hover:text-yellow-500
                                       ${getCurrentUrl() === 'subject' ? active : ''}
                                     `}>Subjects</Link>
                             </div>
                             <div className='max-sm:hidden'>
-                                <Link to={'/course'} className={`rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white hover:text-yellow-500
+                                <Link to={'/course'} className={`rounded-md px-3 py-2 md:text-sm font-medium text-gray-300 hover:bg-white hover:text-yellow-500
                                       ${getCurrentUrl() === 'course' ? active : ''}
                                     `}>Courses</Link>
                             </div>
                             <div className='max-sm:hidden'>
-                                <Link to={'/registered-course'} className={`rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white hover:text-yellow-500
+                                <Link to={'/registered-course'} className={`rounded-md px-3 py-2 md:text-sm font-medium text-gray-300 hover:bg-white hover:text-yellow-500
                                       ${getCurrentUrl() === 'registered-course' ? active : ''}
                                     `}>Registered Course</Link>
                             </div>
                             <div className='max-sm:hidden'>
-                                <Link to={'/info'} className={`rounded-md font-medium text-gray-300 hover:bg-white hover:text-yellow-500 px-3 py-2  ${getCurrentUrl() === 'info' ? active : ''}`} >Welcomes {authUser.fullName}</Link>
+                                <Link to={'/info'} className={`rounded-md font-medium md:text-sm text-gray-300 hover:bg-white hover:text-yellow-500 px-3 py-2  ${getCurrentUrl() === 'info' ? active : ''}`} >Info page</Link>
                             </div>
                             <div className='max-sm:hidden'>
-                                <Link onClick={handleLogout} className="rounded-md bg-red-600 hover:bg-red-400 text-white px-3 py-2 text-sm font-medium ">Logout</Link>
+                                <Link onClick={handleLogout} className="rounded-md bg-red-600 hover:bg-red-400 text-white px-3 py-2 md:text-sm font-medium ">Logout</Link>
                             </div>
                         </div>
                     </div>
@@ -74,7 +74,7 @@ const StudentNavbar = () => {
                 {/* Mobile menu, show/hide based on menu state. */}
                 {
                     isClicked ?
-                        <div className='sm:hidden' id="mobile-menu">
+                        <div className='lg:hidden' id="mobile-menu">
                             <div className="space-y-1 px-2 pt-2 pb-3">
                                 {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
                                 <Link to="/class" className={`block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white hover:text-yellow-500 ${getCurrentUrl() === 'class' ? active : ''} `}>Class</Link>

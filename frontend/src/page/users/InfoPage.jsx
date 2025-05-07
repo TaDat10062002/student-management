@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import useAuthStore from '../store/useAuthStore'
-import Spinner from '../components/Spinner';
+import useAuthStore from '../../store/useAuthStore'
+import Spinner from '../../components/Spinner';
 
 const InfoPage = () => {
     const { authUser, updateUser, checkAuth, isLoaded } = useAuthStore();
