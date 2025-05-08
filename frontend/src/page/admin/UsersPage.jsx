@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import useDashBoardStore from '../../store/useDashBoardStore'
 import Spinner from '../../components/Spinner';
 import Pagination from '../../components/Pagination';
-import { data, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
 const UsersPage = () => {
@@ -13,14 +13,10 @@ const UsersPage = () => {
     const item_per_page = searchParams.get('item_per_page') || 5;
     const departmentID = searchParams.get('departmentID') || '';
     const role = searchParams.get('role') || '';
-    const [status, setStatus] = useState(null);
-    const [userId, setUserId] = useState();
     useEffect(() => {
         getUsers(search, page, item_per_page, departmentID, role)
     }, [getUsers, search, page, item_per_page, departmentID, role])
-    if (userId) {
-        updateAccountStatus(status, userId);
-    }
+
     return (
         <>
             <Toaster reverseOrder={true} />
@@ -75,12 +71,16 @@ const UsersPage = () => {
                                                 {user.gender}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                                                {user.status}
                                             </td>
                                             <td className="px-6 py-4">
                                                 <label className="inline-flex items-center cursor-pointer">
-                                                    <input type="checkbox" defaultChecked={user.status === 'active' ? true : false} className="sr-only peer" />
-                                                    <div onClick={() => { setUserId(user._id), user.status === 'active' ? setStatus('inactive') : setStatus('active') }} className={`relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-green-600`} />
+                                                    <input onClick={() => {
+                                                        const newStatus = user.status === 'active' ? 'inactive' : 'active'; updateAccountStatus(newStatus, user._id).then(() => {
+                                                            getUsers(search, page, item_per_page, departmentID, role)
+                                                        })
+                                                    }} type="checkbox" checked={user.status === 'active' ? true : false} className="sr-only peer" />
+                                                    <div className={`relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-green-600`} />
                                                 </label>
                                             </td>
                                         </tr>
