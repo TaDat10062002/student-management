@@ -26,6 +26,7 @@ import TeacherCoursePage from "../page/users/TeacherCoursePage";
 import StudentInTeacherCoursePage from "../page/users/StudentInTeacherCoursePage";
 import PageNotFound from "../page/users/PageNotFound";
 import CreateUserPage from "../page/admin/CreateUserPage";
+import EditUserPage from "../page/admin/EditUserPage";
 
 export default function Router() {
     const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -58,6 +59,7 @@ export default function Router() {
                 <Route path="users" element={<UsersPage />} />
                 <Route path="departments" element={<DepartmentsPage />} />
                 <Route path="users/create" element={<CreateUserPage />} />
+                {/* <Route path="user/:id/edit" element={<EditUserPage />} /> */}
             </Route>
 
             {/* TEACHER  */}

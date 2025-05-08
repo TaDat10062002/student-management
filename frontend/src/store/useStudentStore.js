@@ -7,7 +7,6 @@ const useStudentStore = create((set) => ({
     isLoaded: false,
     pagination: {},
     setStudents: () => set({ students }),
-
     getStudents: async (search, page, item_per_page, departmentType) => {
         try {
             const res = await axiosInstance.get(`/student?search=${search}&page=${page}&item_per_page=${item_per_page}&departmentType=${departmentType}`);

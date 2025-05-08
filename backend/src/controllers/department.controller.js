@@ -8,67 +8,21 @@ export const getDepartments = async (req, res) => {
     const page = req.query.page || 1;
     const item_per_page = req.query.item_per_page || 3;
     try {
-        if (search) {
-            const queryDepartment = Department.find({
+        const filter = search ?
+            {
                 $or: [
                     { name: { $regex: search, $options: "i" } },
                     { departmentType: { $regex: search, $options: "i" } }
                 ]
-            });
-
-            const departments = await queryDepartment
-                .clone()
-                .select("name departmentType")
-                .skip((page - 1) * item_per_page)
-                .limit(item_per_page);
-
-            const totalDocs = (await queryDepartment).length;
-            const totalPages = Math.ceil(totalDocs / item_per_page);
-
-            if (departments.length === 0) {
-                return res.status(404).json({
-                    message: "No department was found!!!"
-                })
-            }
-
-            if (page > totalPages) {
-                return res.status(404).json({
-                    message: "Page not found!!!"
-                })
-            }
-
-            return res.status(200).json({
-                departments,
-                pagination: {
-                    currentPage: Number(page),
-                    totalPages: totalPages,
-                    item_per_page: item_per_page,
-                    totalDepartments: departments.length
-                }
-            })
-        }
-        const queryDepartment = Department.find();
+            } : {};
+        const queryDepartment = Department.find(filter);
         const departments = await queryDepartment
             .clone()
             .select("name departmentType")
             .skip((page - 1) * item_per_page)
             .limit(item_per_page);
-
-        const totalDocs = (await queryDepartment).length;
+        const totalDocs = await Department.countDocuments(filter);
         const totalPages = Math.ceil(totalDocs / item_per_page);
-
-        if (departments.length === 0) {
-            return res.status(404).json({
-                message: "No department was found!!!"
-            })
-        }
-
-        if (page > totalPages) {
-            return res.status(404).json({
-                message: "Page not found!!!"
-            })
-        }
-
         return res.status(200).json({
             departments,
             pagination: {
@@ -78,8 +32,6 @@ export const getDepartments = async (req, res) => {
                 totalDepartments: departments.length
             }
         })
-
-
     } catch (error) {
         console.log(`Error getDepartment in controller ${error.message}`);
         res.status(500).json({
@@ -92,47 +44,31 @@ export const getTeachersByDepartment = async (req, res) => {
     const search = req.query.search || '';
     const page = req.query.page || 1;
     const item_per_page = req.query.item_per_page || 5;
+    const { id: departmentId } = req.params;
     try {
-        if (search) {
-            const queryTeacherByDepartment = Teacher.find({
+        const filter = search ?
+            {
                 role: "teacher",
+                department: departmentId,
                 $or: [
                     { fullName: { $regex: search, $options: "i" } },
                     { email: { $regex: search, $options: "i" } },
                     { gender: { $regex: search, $options: "i" } },
                     { experience: { $regex: search, $options: "i" } },
                 ]
-            })
-            const totalDocs = (await queryTeacherByDepartment).length;
-            const totalPages = Math.ceil(totalDocs / item_per_page);
-            const teachers = await queryTeacherByDepartment
-                .clone()
-                .select("fullName email role dob gender experience -_id")
-                .skip((page - 1) * item_per_page)
-                .limit(item_per_page);
-
-            return res.status(200).json({
-                teachers,
-                pagination: {
-                    currentPage: Number(page),
-                    totalPages: totalPages,
-                    item_per_page: item_per_page,
-                    totalTeachers: teachers.length
-                }
-            })
-        }
-
-        const queryTeacherByDepartment = Teacher.find({
-            role: "teacher",
-        })
-        const totalDocs = (await queryTeacherByDepartment).length;
+            } :
+            {
+                role: "teacher",
+                department: departmentId
+            };
+        const queryTeacherByDepartment = Teacher.find(filter)
+        const totalDocs = await Teacher.countDocuments(filter);
         const totalPages = Math.ceil(totalDocs / item_per_page);
         const teachers = await queryTeacherByDepartment
             .clone()
             .select("fullName email role dob gender experience -_id")
             .skip((page - 1) * item_per_page)
             .limit(item_per_page);
-
         return res.status(200).json({
             teachers,
             pagination: {

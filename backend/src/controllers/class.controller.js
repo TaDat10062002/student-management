@@ -63,44 +63,30 @@ export const getStudentByClass = async (req, res) => {
     const item_per_page = req.query.item_per_page || 5;
     const classroom = await ClassRoom.findById(classID).select("name -_id");
     try {
-        if (search) {
-            const queryStudentByClass = Student.find(
-                {
-                    role: 'student',
-                    class: classID,
-                    $or: [
-                        {
-                            fullName: { $regex: search, $options: "i" }
-                        },
-                        {
-                            email: { $regex: search, $options: "i" }
-                        }
-                    ]
-                });
-            const students = await queryStudentByClass.clone().select("fullName email dob gender").populate({
-                path: "class",
-                select: "name -_id"
-            }).skip((page - 1) * item_per_page).limit(item_per_page);
-            const totalDocs = (await queryStudentByClass).length;
-            const totalPages = Math.ceil(totalDocs / item_per_page);
-            return res.status(200).json({
-                students,
-                classroom,
-                pagination: {
-                    currentPage: Number(page),
-                    totalPages: totalPages,
-                    item_per_page: item_per_page,
-                    totalStudent: students.length
-                }
-            })
-        }
-
-        const queryStudentByClass = Student.find({ class: classID });
+        const filter = search ?
+            {
+                role: 'student',
+                class: classID,
+                $or: [
+                    {
+                        fullName: { $regex: search, $options: "i" }
+                    },
+                    {
+                        email: { $regex: search, $options: "i" }
+                    }
+                ]
+            }
+            :
+            {
+                role: 'student',
+                class: classID,
+            };
+        const queryStudentByClass = Student.find(filter);
         const students = await queryStudentByClass.clone().select("fullName email dob gender").populate({
             path: "class",
             select: "name -_id"
         }).skip((page - 1) * item_per_page).limit(item_per_page);
-        const totalDocs = (await queryStudentByClass).length;
+        const totalDocs = await Student.countDocuments(filter);
         const totalPages = Math.ceil(totalDocs / item_per_page);
         return res.status(200).json({
             students,
