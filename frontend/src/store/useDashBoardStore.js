@@ -1,6 +1,9 @@
-import axios from "axios";
 import { create } from "zustand";
-import axiosInstance from "../lib/axios";
+import { getDashBoardStatistic } from "../action/dashBoardAction";
+import { createUser, getUsers, updateAccountStatus } from "../action/userAction";
+import { getDepartments } from "../action/departmentAction";
+import { getClassrooms } from "../action/classroomAction";
+import { data } from "react-router-dom";
 
 
 const useDashBoardStore = create((set) => ({
@@ -10,44 +13,12 @@ const useDashBoardStore = create((set) => ({
     classrooms: [],
     pagination: {},
     isLoaded: false,
-    setDashboard: () => set({ totalStatistic }),
-    getDashBoardStatistic: async () => {
-        try {
-            const res = await axiosInstance.get('/dashboard');
-            set({ totalStatistic: res.data.totalStatistic, isLoaded: true });
-        } catch (error) {
-            console.log(`Error in getDashBoardStatistic ${error}`);
-            toast.error(error.response.data.message);
-        }
-    },
-    getUsers: async (page, item_per_page) => {
-        try {
-            const res = await axiosInstance.get(`/user?page=${page}&item_per_page=${item_per_page}`);
-            set({ users: res.data.users, pagination: res.data.pagination });
-            set({ isLoaded: true });
-        } catch (error) {
-            console.log(`Error in getUsers ${error}`);
-            toast.error(error.response.data.message);
-        }
-    },
-    getDepartments: async () => {
-        try {
-            const res = await axiosInstance.get('/dashboard/department');
-            set({ departments: res.data.departments });
-        } catch (error) {
-            console.log(`Error in getDepartments ${error}`);
-            toast.error(error.response.data.message);
-        }
-    },
-    getClassrooms: async () => {
-        try {
-            const res = await axiosInstance.get('/dashboard/classroom');
-            set({ classrooms: res.data.classrooms });
-        } catch (error) {
-            console.log(`Error in getClassrooms ${error}`);
-            toast.error(error.response.data.message);
-        }
-    }
+    getDashBoardStatistic: () => getDashBoardStatistic(set),
+    getUsers: (search, page, item_per_page, departmentID, role) => getUsers(set, search, page, item_per_page, departmentID, role),
+    createUser: (data, user) => createUser(set, data, user),
+    updateAccountStatus: (status, userId) => updateAccountStatus(set, status, userId),
+    getDepartments: () => getDepartments(set),
+    getClassrooms: () => getClassrooms(set)
 }))
 
 export default useDashBoardStore;

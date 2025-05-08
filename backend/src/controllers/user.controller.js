@@ -10,88 +10,36 @@ export const getUsers = async (req, res) => {
     const search = req.query.search || '';
     const departmentID = req.query.departmentID || null;
     const page = req.query.page || 1;
-    const item_per_page = req.query.item_per_page || 3;
+    const item_per_page = req.query.item_per_page || 5;
+    const roleUser = req.query.role || '';
     // su dung clone de ko can lap lai query 
     try {
-        if (departmentID) {
-            // tim dung la tong cong teacher va student
-            const queryUser = User.find({
+        const filterDepartment = departmentID ?
+            {
                 role: { $in: ['student', 'teacher'] },
                 // format lai id
                 department: new mongoose.Types.ObjectId(departmentID)
-            })
-
-            const users = await queryUser
-                .clone()
-                .select("fullName email gender role department")
-                .skip((page - 1) * user_per_page)
-                .limit(user_per_page);
-
-            const totalDocs = (await queryUser).length;
-            const totalPages = Math.ceil(totalDocs / user_per_page);
-
-            if (page > totalPages) {
-                return res.status(404).json({
-                    message: "Page not found!!!"
-                })
-            }
-
-            return res.status(200).json({
-                users,
-                pagination: {
-                    currentPage: Number(page),
-                    totalPages: totalPages,
-                    user_per_page: user_per_page,
-                    totalUsers: users.length,
-                }
-            })
-        }
-        // search fullName email gender role and paginate
-        if (search) {
-            const queryUser = User.find({
+            } : {};
+        const filterPure = search ?
+            {
                 $or: [
                     { fullName: { $regex: search, $options: "i" } },
                     { email: { $regex: search, $options: "i" } },
                     { gender: { $regex: search, $options: "i" } },
                     { role: { $regex: search, $options: "i" } },
                 ]
-            })
-
-            const users = await queryUser
-                .clone()
-                .select("fullName email gender role department")
-                .skip((page - 1) * item_per_page)
-                .limit(item_per_page);
-
-            const totalDocs = (await queryUser).length;
-            const totalPages = Math.ceil(totalDocs / item_per_page);
-
-            if (page > totalPages) {
-                return res.status(404).json({
-                    message: "Page not found!!!"
-                })
-            }
-
-            return res.status(200).json({
-                users,
-                pagination: {
-                    currentPage: Number(page),
-                    totalPages: totalPages,
-                    item_per_page: item_per_page,
-                    totalUsers: users.length,
-                }
-            })
-        }
-        const queryUser = User.find();
+            } :
+            {}
+        const filterRole = roleUser ? { role: roleUser } : {};
+        const filter = { ...filterPure, ...filterDepartment, ...filterRole };
+        const queryUser = User.find(filter);
         const users = await queryUser
             .clone()
-            .select("fullName email role gender department")
+            .select("fullName email role gender department status")
             .skip((page - 1) * item_per_page)
             .limit(item_per_page);
-
-        const totalDocs = (await queryUser).length;
+        const totalDocs = await User.countDocuments(filter);
         const totalPages = Math.ceil(totalDocs / item_per_page);
-
         res.status(200).json({
             users,
             pagination: {
@@ -101,7 +49,6 @@ export const getUsers = async (req, res) => {
                 totalUsers: users.length
             }
         })
-
     } catch (error) {
         console.log(`Error getUsers in controller ${error.message}`);
         res.status(500).json({
@@ -144,7 +91,7 @@ export const createUser = async (req, res) => {
                 fullName,
                 email,
                 password: hashedPassword,
-                department: department_id
+                department: new mongoose.Types.ObjectId(department_id)
             })
             await newUser.save()
             return res.status(201).json({
@@ -156,8 +103,8 @@ export const createUser = async (req, res) => {
                 fullName,
                 email,
                 password: hashedPassword,
-                department: department_id,
-                class: class_id
+                department: new mongoose.Types.ObjectId(department_id),
+                class: new mongoose.Types.ObjectId(class_id)
             })
             await newUser.save()
             return res.status(201).json({
@@ -176,7 +123,7 @@ export const updateUser = async (req, res) => {
     const { id: userID } = req.params;
     const loggedUser = req.user;
     const userId = loggedUser._id.toString();
-    const { fullName, password, dob, gender, experience, department } = req.body;
+    const { fullName, dob, gender, experience, department_id, class_id } = req.body;
     try {
         if (userId !== userID) {
             return res.status(403).json({
@@ -195,7 +142,13 @@ export const updateUser = async (req, res) => {
 
         else if (loggedUser.role === 'teacher') {
             const updatedUser = await Teacher.findByIdAndUpdate(userID,
-                { fullName, password, dob, gender, experience },
+                {
+                    fullName,
+                    dob,
+                    gender,
+                    experience,
+                    department: department_id
+                },
                 { new: true })
             return res.status(200).json({
                 message: "Update information successfully",
@@ -204,7 +157,13 @@ export const updateUser = async (req, res) => {
         }
         else if (loggedUser.role === 'student') {
             const updatedUser = await Student.findByIdAndUpdate(userID,
-                { fullName, password, dob, gender },
+                {
+                    fullName,
+                    dob,
+                    gender,
+                    department: department_id,
+                    class: class_id
+                },
                 { new: true }).populate({
                     path: "department",
                     select: "name -_id"
@@ -227,27 +186,19 @@ export const updateUser = async (req, res) => {
     }
 }
 
-export const deleteUser = async (req, res) => {
+export const updateAccountStatus = async (req, res) => {
     const { id: userId } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-        return res.status(400).json({
-            message: "Invalid User ID"
-        })
-    }
+    const status = req.body;
     try {
-        const deletedUser = await User.findByIdAndDelete(userId, { new: true });
-        if (!deletedUser) {
-            return res.status(400).json({
-                message: "Delete user failed!!!"
-            })
-        }
-        res.status(200).json({
-            message: `Delete user successfully with role is ${deletedUser.role}`
+        await User.findByIdAndUpdate(userId, status, { new: true });
+        return res.status(200).json({
+            message: "Updated in status successfully",
         })
     } catch (error) {
-        console.log(`Error deleteUser in controller ${error.message}`);
+        console.log(`Error updateAccountStatus in controller ${error.message} `);
         res.status(500).json({
-            message: "Internal Server Errors"
+            message: "Internal Server Error"
         })
     }
 }
+

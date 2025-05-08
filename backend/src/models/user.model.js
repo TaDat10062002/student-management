@@ -18,7 +18,12 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         minLength: 6
-    }
+    },
+    status: {
+        type: String,
+        enum: ['active', 'inactive'],
+        default: "inactive",
+    },
 }, options)
 const User = mongoose.model("User", userSchema);
 export default User;

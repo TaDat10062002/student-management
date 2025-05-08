@@ -8,7 +8,7 @@ import RegisteredCourse from "../models/registered_course.model.js";
 export const getAllCourse = async (req, res) => {
     const search = req.query.search || '';
     const page = req.query.page || 1;
-    const item_per_page = req.query.item_per_page || 3;
+    const item_per_page = req.query.item_per_page || 5;
     try {
         const pipeline = [
             // teacher

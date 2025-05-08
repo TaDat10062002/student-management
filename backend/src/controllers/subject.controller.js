@@ -6,54 +6,22 @@ import Course from "../models/course.model.js";
 export const getSubjects = async (req, res) => {
     const search = req.query.search || '';
     const page = req.query.page || 1;
-    const item_per_page = req.query.item_per_page || 3;
+    const item_per_page = req.query.item_per_page || 5;
     try {
-        if (search) {
-            const querySubject = Subject.find({
+        const filter = search ?
+            {
                 $or: [
                     { name: { $regex: search, $options: "i" } },
                     { number_of_credits: { $regex: search, $options: "i" } },
                 ]
-            })
-
-            const subjects = await querySubject
-                .clone()
-                .skip((page - 1) * item_per_page)
-                .limit(item_per_page);
-            const totalDocs = (await querySubject).length;
-            const totalPages = Math.ceil(totalDocs / item_per_page);
-
-            res.status(200).json({
-                subjects,
-                pagination: {
-                    currentPage: Number(page),
-                    totalPages: totalPages,
-                    item_per_page: item_per_page,
-                    totalSubjects: subjects.length
-                }
-            })
-        }
-
-        const querySubject = Subject.find();
+            } : {};
+        const querySubject = Subject.find(filter);
         const subjects = await querySubject
             .clone()
             .skip((page - 1) * item_per_page)
             .limit(item_per_page);
-
-        if (subjects.length === 0) {
-            return res.status(404).json({
-                message: "No subjects was found!!!"
-            })
-        }
-
-        const totalDocs = (await querySubject).length;
+        const totalDocs = await Subject.countDocuments(filter);
         const totalPages = Math.ceil(totalDocs / item_per_page);
-
-        if (page > totalPages) {
-            return res.status(404).json({
-                message: "Page not found!!!"
-            })
-        }
         res.status(200).json({
             subjects,
             pagination: {
@@ -63,7 +31,6 @@ export const getSubjects = async (req, res) => {
                 totalSubjects: subjects.length
             }
         })
-
     } catch (error) {
         console.log(`Error getSubjects in controller ${error.message}`);
         res.status(500).json({

@@ -7,7 +7,7 @@ export const getAllRegisteredCourse = async (req, res) => {
     const studentId = user._id;
     const search = req.query.search || '';
     const page = req.query.page || 1;
-    const item_per_page = req.query.item_per_page || 3;
+    const item_per_page = req.query.item_per_page || 5;
     try {
         if (search) {
             // view only that student registeredCourses

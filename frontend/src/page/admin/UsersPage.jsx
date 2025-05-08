@@ -2,18 +2,28 @@ import React, { useEffect, useState } from 'react'
 import useDashBoardStore from '../../store/useDashBoardStore'
 import Spinner from '../../components/Spinner';
 import Pagination from '../../components/Pagination';
-import { useSearchParams } from 'react-router-dom';
+import { data, useSearchParams } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 
 const UsersPage = () => {
-    const { users, getUsers, isLoaded, pagination } = useDashBoardStore();
+    const { users, getUsers, isLoaded, pagination, updateAccountStatus } = useDashBoardStore();
     const [searchParams] = useSearchParams();
+    const search = searchParams.get('search') || '';
     const page = searchParams.get('page') || 1;
-    const item_per_page = searchParams.get('item_per_page') || 3;
+    const item_per_page = searchParams.get('item_per_page') || 5;
+    const departmentID = searchParams.get('departmentID') || '';
+    const role = searchParams.get('role') || '';
+    const [status, setStatus] = useState(null);
+    const [userId, setUserId] = useState();
     useEffect(() => {
-        getUsers(page, item_per_page)
-    }, [getUsers, page, item_per_page])
+        getUsers(search, page, item_per_page, departmentID, role)
+    }, [getUsers, search, page, item_per_page, departmentID, role])
+    if (userId) {
+        updateAccountStatus(status, userId);
+    }
     return (
         <>
+            <Toaster reverseOrder={true} />
             {
                 isLoaded ?
                     <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-5 mx-5">
@@ -39,17 +49,14 @@ const UsersPage = () => {
                                         Update info
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Delete
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Hide account
+                                        Account status
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {
                                     users.map((user, index) => (
-                                        <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200">
+                                        <tr key={index} className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200" >
                                             <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                                 {index + 1}
                                             </th>
@@ -71,22 +78,21 @@ const UsersPage = () => {
                                                 <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Delete</a>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">On/off</a>
+                                                <label className="inline-flex items-center cursor-pointer">
+                                                    <input type="checkbox" defaultChecked={user.status === 'active' ? true : false} className="sr-only peer" />
+                                                    <div onClick={() => { setUserId(user._id), user.status === 'active' ? setStatus('inactive') : setStatus('active') }} className={`relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-green-600`} />
+                                                </label>
                                             </td>
                                         </tr>
                                     ))
                                 }
                             </tbody>
                         </table>
-                    </div>
+                    </div >
                     : <Spinner />
             }
             <Pagination pagination={pagination} />
         </>
     )
 }
-
 export default UsersPage
