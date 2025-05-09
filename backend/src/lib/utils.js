@@ -12,7 +12,7 @@ export const generateToken = async (userId, res) => {
 }
 
 export const destroyToken = (res) => {
-    res.clearCookie("token", {
+    res.clearCookie("jwt", {
         httpOnly: true,
         secure: true,
         sameSite: 'None'
