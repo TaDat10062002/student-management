@@ -11,12 +11,13 @@ export const generateToken = async (userId, res) => {
     return token;
 }
 
-export const destroyToken = async (res) => {
-    const times = 0;
-    res.clearCookie("jwt", {
-        maxAge: times
+export const destroyToken = (res) => {
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None'
     });
-}
+};
 
 export const generateCourseCode = (course) => {
     if (!course) return "1000";
