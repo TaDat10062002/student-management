@@ -20,7 +20,7 @@ const app = express();
 // apply cors
 // Enable CORS for all routes and origins
 app.use(cors({
-    origin: 'http://localhost:5173', // Allow only this origin
+    origin: 'https://student-management-3p48gfbch-tadat2002s-projects.vercel.app', // Allow only this origin
     credentials: true, // Enable cookies and authorization headers
 }));
 // apply body json
@@ -44,3 +44,4 @@ app.listen(PORT, () => {
     connectDB(MONGODB_URI)
     console.log(`Server is running at http://localhost:${PORT}`)
 })
+
