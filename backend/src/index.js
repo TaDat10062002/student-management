@@ -20,7 +20,7 @@ const app = express();
 // apply cors
 // Enable CORS for all routes and origins
 app.use(cors({
-    origin: 'https://student-management-3p48gfbch-tadat2002s-projects.vercel.app', // Allow only this origin
+    origin: 'https://student-management-bice.vercel.app', // Allow only this origin
     credentials: true, // Enable cookies and authorization headers
 }));
 // apply body json
