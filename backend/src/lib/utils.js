@@ -13,7 +13,7 @@ export const generateToken = async (userId, res) => {
 
 export const destroyToken = async (res) => {
     const times = 0;
-    res.cookie("jwt", "", {
+    res.clearCookie("jwt", {
         maxAge: times
     });
 }
