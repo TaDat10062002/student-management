@@ -4,9 +4,9 @@ export const generateToken = async (userId, res) => {
     const token = jwt.sign({ userId }, process.env.JWT_SECRET_KEY, { expiresIn: "7 days" });
     res.cookie('jwt', token, {
         httpOnly: true,
-        secure: false,
+        secure: true,
+        sameSite: 'None',
         maxAge: times,
-        sameSite: "strict"
     })
     return token;
 }
