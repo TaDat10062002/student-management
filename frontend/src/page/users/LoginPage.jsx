@@ -19,7 +19,7 @@ const LoginPage = () => {
             <Toaster position='top-right' reverseOrder={false} />
             <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                    <img className="mx-auto h-30 w-auto" src="public/img/logo.png" alt="Your Company" />
+                    <img className="mx-auto h-30 w-auto" src="/img/logo.png" alt="Your Company" />
                     <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Sign in to your account</h2>
                 </div>
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
