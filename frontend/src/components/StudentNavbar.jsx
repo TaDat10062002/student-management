@@ -36,7 +36,7 @@ const StudentNavbar = () => {
                         </div>
                         <div className="flex flex-nowrap whitespace-nowrap mx-auto md:gap-8 max-lg:hidden">
                             <Link to={'/info'}>
-                                <img className="h-8 w-auto rounded-2xl max-lg:hidden" src="/public/img/logo.png" alt="Your Company" />
+                                <img className="h-8 w-auto rounded-2xl max-lg:hidden" src="/img/logo.png" alt="Your Company" />
                             </Link>
                             <div className='max-sm:hidden'>
                                 <Link to={'/class'} className={`rounded-md px-3 py-2 md:text-sm font-medium text-gray-300 hover:bg-white hover:text-yellow-500

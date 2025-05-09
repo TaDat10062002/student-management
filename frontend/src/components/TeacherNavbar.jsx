@@ -37,7 +37,7 @@ const TeacherNavbar = () => {
                         </div>
                         <div className="flex flex-nowrap whitespace-nowrap mx-auto md:gap-8 max-lg:hidden">
                             <Link to={'/info'}>
-                                <img className="max-md:hidden h-8 w-auto rounded-2xl" src="/public/img/logo.png" alt="Your Company" />
+                                <img className="max-md:hidden h-8 w-auto rounded-2xl" src="/img/logo.png" alt="Your Company" />
                             </Link>
                             <div className='max-sm:hidden'>
                                 <Link to={'/department'} className={`max-lg:text-xs rounded-md px-2 py-2 text-sm font-medium text-gray-300 hover:bg-white hover:text-yellow-500
