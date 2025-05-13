@@ -9,7 +9,12 @@ const departmentSchema = new mongoose.Schema({
         type: String,
         enum: ['natural', 'society'],
         default: ''
-    }
+    },
+    status: {
+        type: String,
+        enum: ['active', 'inactive'],
+        default: "inactive",
+    },
 }, { timestamps: true });
 const Department = mongoose.model("Department", departmentSchema);
 export default Department;

@@ -30,7 +30,7 @@ export const getUsers = async (req, res) => {
                 ]
             } :
             {}
-        const filterRole = roleUser ? { role: roleUser } : {};
+        const filterRole = roleUser ? { role: roleUser } : { role: { $ne: 'admin' } };
         const filter = { ...filterPure, ...filterDepartment, ...filterRole };
         const queryUser = User.find(filter);
         const users = await queryUser
