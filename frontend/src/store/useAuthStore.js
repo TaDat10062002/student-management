@@ -57,7 +57,7 @@ const useAuthStore = create((set) => ({
     updateUser: async (userId, data) => {
         set({ isUpdating: true })
         try {
-            const res = await axiosInstance.put(`/user/${userId}/edit`, data);
+            const res = await axiosInstance.put(`/user/${userId}/update`, data);
             set({ authUser: res.data.updatedUser })
             toast.success(res.data.message);
             useAuthStore.getState().checkAuth()

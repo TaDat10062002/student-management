@@ -57,6 +57,22 @@ export const getUsers = async (req, res) => {
     }
 }
 
+export const getUserById = async (req, res) => {
+    const { id: userId } = req.params;
+    try {
+        const user = await User.findById(userId).select("-password");
+        if (!user) return res.status(404).json({ message: "User not found!!!" })
+        res.status(200).json({
+            user
+        })
+    } catch (error) {
+        console.log(`Error getUserById in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
 export const createUser = async (req, res) => {
     const { fullName, email, password, department_id, class_id } = req.body;
     const { userType } = req.params;
@@ -180,6 +196,62 @@ export const updateUser = async (req, res) => {
     }
     catch (error) {
         console.log(`Error updateUser in controller ${error.message} `);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+export const updateStudentInfo = async (req, res) => {
+    const { id: userID } = req.params;
+    const { fullName, email, department_id, class_id } = req.body;
+    try {
+        const updatedUser = await Student.findByIdAndUpdate(userID,
+            {
+                fullName,
+                email,
+                department: department_id,
+                class: class_id
+            },
+            { new: true }).populate({
+                path: "department",
+                select: "name -_id"
+            }).populate({
+                path: "class",
+                select: "name -_id"
+            })
+        return res.status(200).json({
+            message: `Update information successfully with role ${updatedUser.role}`,
+            updatedUser
+        })
+    }
+    catch (error) {
+        console.log(`Error updateStudentInfo in controller ${error.message} `);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+export const updateTeacherInfo = async (req, res) => {
+    const { id: userID } = req.params;
+    const { fullName, email, experience, department_id } = req.body;
+    try {
+        const updatedUser = await Teacher.findByIdAndUpdate(userID,
+            {
+                fullName,
+                email,
+                experience,
+                department: department_id
+            },
+            { new: true })
+        return res.status(200).json({
+            message: `Update information successfully with role ${updatedUser.role}`,
+            updatedUser
+        })
+    }
+    catch (error) {
+        console.log(`Error updateTeacherInfo in controller ${error.message} `);
         res.status(500).json({
             message: "Internal Server Error"
         })
