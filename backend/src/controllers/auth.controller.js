@@ -17,6 +17,12 @@ export const login = async (req, res) => {
             })
         }
 
+        if (user.status === 'inactive') {
+            return res.status(401).json({
+                message: "You don't have this permission!!!"
+            })
+        }
+
         // check password 
         const isCorrectedPassword = bcrypt.compareSync(password, user.password);
         if (!isCorrectedPassword) {
