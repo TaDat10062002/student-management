@@ -18,7 +18,7 @@ export const getDepartments = async (req, res) => {
         const queryDepartment = Department.find(filter);
         const departments = await queryDepartment
             .clone()
-            .select("name departmentType")
+            .select("name departmentType status")
             .skip((page - 1) * item_per_page)
             .limit(item_per_page);
         const totalDocs = await Department.countDocuments(filter);
@@ -86,6 +86,26 @@ export const getTeachersByDepartment = async (req, res) => {
     }
 }
 
+export const getDepartmentById = async (req, res) => {
+    const { id: departmentID } = req.params;
+    try {
+        const department = await Department.findById(departmentID);
+        if (!department) {
+            return res.status(400).json({
+                message: "Department not found!!!"
+            })
+        }
+        res.status(200).json({
+            department
+        })
+    } catch (error) {
+        console.log(`Error getDepartmentById in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
 export const createDepartment = async (req, res) => {
     const { name, departmentType } = req.body;
     try {
@@ -122,6 +142,13 @@ export const updateDepartment = async (req, res) => {
         })
     }
     try {
+
+        if (!name || !departmentType) {
+            return res.status(400).json({
+                message: "All fields are required"
+            })
+        }
+
         const upadatedDepartment = await Department.findByIdAndUpdate(departmentID, {
             name,
             departmentType
@@ -144,31 +171,19 @@ export const updateDepartment = async (req, res) => {
     }
 }
 
-export const deleteDepartment = async (req, res) => {
+export const updateDepartmentStatus = async (req, res) => {
     const { id: departmentID } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(departmentID)) {
-        return res.status(400).json({
-            message: "Invalid Department ID"
-        })
-    }
+    const status = req.body;
     try {
-        const department = await Department.findById(departmentID);
-        const count = await User.countDocuments({
-            departmentID: department._id
-        })
-        if (count > 0) {
-            return res.status(400).json({
-                message: `Cannot delete ${department.name}. There are ${count} person belong to this department`
-            })
-        }
-        await Department.findByIdAndDelete(departmentID);
-        res.status(200).json({
-            message: `${department.name} deparment has been deleted successfully`
+        await Department.findByIdAndUpdate(departmentID, status, { new: true });
+        return res.status(200).json({
+            message: "Updated in status successfully",
         })
     } catch (error) {
-        console.log(`Error deleteDepartment in controller ${error.message}`);
-        req.status(500).json({
+        console.log(`Error updateDepartmentStatus in controller ${error.message} `);
+        res.status(500).json({
             message: "Internal Server Error"
         })
     }
 }
+

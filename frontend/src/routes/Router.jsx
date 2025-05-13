@@ -27,6 +27,8 @@ import StudentInTeacherCoursePage from "../page/users/StudentInTeacherCoursePage
 import PageNotFound from "../page/users/PageNotFound";
 import CreateUserPage from "../page/admin/CreateUserPage";
 import EditUserPage from "../page/admin/EditUserPage";
+import CreateDepartmentPage from "../page/admin/CreateDepartmentPage";
+import EditDepartmentPage from "../page/admin/EditDepartmentPage";
 
 export default function Router() {
     const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -56,10 +58,14 @@ export default function Router() {
             {/* layout cho dasboard  */}
             <Route path="/admin" element={authUser && authUser.role === 'admin' ? (<DashBoardLayout />) : (<Navigate to={'/admin'} />)} >
                 <Route path="dashboard" element={<DashboardPage />} />
+
                 <Route path="users" element={<UsersPage />} />
-                <Route path="departments" element={<DepartmentsPage />} />
                 <Route path="users/create" element={<CreateUserPage />} />
                 <Route path="users/:id/edit" element={<EditUserPage />} />
+
+                <Route path="departments" element={<DepartmentsPage />} />
+                <Route path="departments/create" element={<CreateDepartmentPage />} />
+                <Route path="departments/:id/edit" element={<EditDepartmentPage />} />
             </Route>
 
             {/* TEACHER  */}

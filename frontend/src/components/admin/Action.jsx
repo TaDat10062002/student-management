@@ -19,12 +19,17 @@ const Action = () => {
                 <div className='col-span-2'>
                     <FilterByRecords />
                 </div>
-                <div className='col-span-2'>
-                    <FilterByDepartment />
-                </div>
-                <div className='col-span-2'>
-                    <FilterByRole />
-                </div>
+                {
+                    parts[2] === 'users' ?
+                        <>
+                            <div className='col-span-2'>
+                                <FilterByDepartment />
+                            </div>
+                            <div className='col-span-2'>
+                                <FilterByRole />
+                            </div>
+                        </> : ''
+                }
                 <div className='col-span-2'>
                     <ClearFilter />
                 </div>
@@ -33,8 +38,6 @@ const Action = () => {
                 </div>
             </div>
         </>
-
-
     )
 }
 
