@@ -59,7 +59,7 @@ export default function Router() {
                 <Route path="users" element={<UsersPage />} />
                 <Route path="departments" element={<DepartmentsPage />} />
                 <Route path="users/create" element={<CreateUserPage />} />
-                {/* <Route path="user/:id/edit" element={<EditUserPage />} /> */}
+                <Route path="users/:id/edit" element={<EditUserPage />} />
             </Route>
 
             {/* TEACHER  */}

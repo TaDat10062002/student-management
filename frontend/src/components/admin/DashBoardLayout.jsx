@@ -14,9 +14,7 @@ const DashBoardLayout = () => {
             <div className="flex-1 flex flex-col">
                 <HeaderDashBoard />
                 {
-                    useLocation().pathname !== '/admin/dashboard' && parts[3] !== 'create' ?
-                        <Action />
-                        : ''
+                    parts.length === 3 && parts[2] !== 'dashboard' ? <Action /> : ''
                 }
                 <Outlet />
             </div>

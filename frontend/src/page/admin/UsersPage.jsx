@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import useDashBoardStore from '../../store/useDashBoardStore'
 import Spinner from '../../components/Spinner';
 import Pagination from '../../components/Pagination';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
 const UsersPage = () => {
@@ -41,11 +41,14 @@ const UsersPage = () => {
                                     <th scope="col" className="px-6 py-3">
                                         Gender
                                     </th>
-                                    <th scope="col" className="px-6 py-3">
+                                    <td scope="col" className="px-6 py-3">
                                         Update info
-                                    </th>
+                                    </td>
                                     <th scope="col" className="px-6 py-3">
                                         Account status
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Action
                                     </th>
                                 </tr>
                             </thead>
@@ -61,21 +64,22 @@ const UsersPage = () => {
                                             </td>
                                             <td className="px-6 py-4">
                                                 {user.email}
-
                                             </td>
                                             <td className="px-6 py-4">
                                                 {user.role}
-
                                             </td>
                                             <td className="px-6 py-4">
                                                 {user.gender}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {user.status}
+                                                <Link to={`${user._id}/edit`} className='text-blue-500 underline'>Update user info</Link>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={`${user.status === 'active' ? 'bg-green-500 text-black p-2 rounded-md' : 'bg-yellow-500 text-black p-2 rounded-2xl'}`}>{user.status}</span>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <label className="inline-flex items-center cursor-pointer">
-                                                    <input onClick={() => {
+                                                    <input onChange={() => {
                                                         const newStatus = user.status === 'active' ? 'inactive' : 'active'; updateAccountStatus(newStatus, user._id).then(() => {
                                                             getUsers(search, page, item_per_page, departmentID, role)
                                                         })

@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import StudentForm from '../../components/admin/StudentForm';
-import Spinner from '../../components/Spinner';
 import TeacherForm from '../../components/admin/TeacherForm';
 import { Toaster } from 'react-hot-toast';
 

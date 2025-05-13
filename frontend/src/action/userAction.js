@@ -12,6 +12,27 @@ export const getUsers = async (set, search, page, item_per_page, departmentID, r
     }
 }
 
+export const getUserById = async (set, id) => {
+    try {
+        const res = await axiosInstance.get(`/user/${id}/edit`);
+        set({ isLoaded: true })
+        set({ user: res.data.user })
+    } catch (error) {
+        console.log(`Error in getUserById ${error}`);
+        toast.error(error.response.data.message);
+    }
+}
+
+export const updateUser = async (set, id, data, role) => {
+    try {
+        const res = await axiosInstance.put(`/user/${id}/update-${role}`, data)
+        toast.success(res.data.message)
+    } catch (error) {
+        console.log(`Error in updateUser ${error}`);
+        toast.error(error.response.data.message);
+    }
+}
+
 export const createUser = async (set, data, user) => {
     try {
         const res = await axiosInstance.post(`/user/${user}/create`, data);
