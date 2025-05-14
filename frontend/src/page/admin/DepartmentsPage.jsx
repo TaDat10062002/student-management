@@ -18,6 +18,7 @@ const DepartmentPage = () => {
     return (
         <>
             <Toaster reverseOrder={true} />
+            <div className='text-2xl text-center'>List of departments</div>
             {
                 isLoaded ?
                     <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-5 mx-5">
@@ -80,9 +81,9 @@ const DepartmentPage = () => {
                                                 </label>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className="p-3 bg-amber-500 rounded-md text-white cursor-pointer">
+                                                <span className="p-3 bg-amber-500 rounded-2xl text-white cursor-pointer">
                                                     <Link to={`${deparment._id}/edit`}>
-                                                        Update department info
+                                                        Update department information
                                                     </Link>
                                                 </span>
                                             </td>

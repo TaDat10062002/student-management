@@ -34,7 +34,7 @@ export const getDepartmentById = async (set, id) => {
     }
 }
 
-export const createDepartment = async (set, data) => {
+export const createDepartment = async (data) => {
     try {
         const res = await axiosInstance.post('/department', data);
         toast.success(res.data.message)
@@ -44,7 +44,7 @@ export const createDepartment = async (set, data) => {
     }
 }
 
-export const updateDepartment = async (set, id, data) => {
+export const updateDepartment = async (id, data) => {
     try {
         const res = await axiosInstance.put(`/department/${id}/update`, data);
         toast.success(res.data.message)
@@ -54,7 +54,7 @@ export const updateDepartment = async (set, id, data) => {
     }
 }
 
-export const updateDepartmentStatus = async (set, status, id) => {
+export const updateDepartmentStatus = async (status, id) => {
     try {
         const res = await axiosInstance.put(`/department/${id}/update-status`, { status });
         toast.success(res.data.message)

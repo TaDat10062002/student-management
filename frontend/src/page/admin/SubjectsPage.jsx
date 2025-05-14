@@ -1,24 +1,23 @@
-import { useEffect } from 'react'
-import { Link, useParams, useSearchParams } from 'react-router-dom'
-import useClassStore from '../../store/useClassStore';
+import React, { useEffect } from 'react'
+import useSubjectStore from '../../store/useSubjectStore'
 import Pagination from '../../components/Pagination';
+import { Link, useSearchParams } from 'react-router-dom';
 import Spinner from '../../components/Spinner';
 
-const StudentClassPage = () => {
-    const { id } = useParams();
-    const { studentByClass, pagination, classroom, isLoaded, getStudentByClass } = useClassStore();
+const SubjectsPage = () => {
+    const { subjects, isLoaded, pagination, getSubjects } = useSubjectStore();
     const [searchParams] = useSearchParams();
     const search = searchParams.get('search') || '';
     const page = searchParams.get('page') || 1;
     const item_per_page = searchParams.get('item_per_page') || 5;
+
     useEffect(() => {
-        getStudentByClass(id, search, page, item_per_page);
-    }, [getStudentByClass, id, search, page, item_per_page])
+        getSubjects(search, page, item_per_page)
+    }, [getSubjects, search, page, item_per_page])
 
     return (
         <>
-            <Link to={'/class'} className='block px-3 py-3 bg-blue-500 w-fit rounded-md ml-20 mt-5'>Back to Class page</Link>
-            <div className='text-2xl text-center mt-5'>List students in Class {classroom.name}</div>
+            <div className='text-3xl text-center mt-5'>List of subjects</div>
             {
                 isLoaded ?
                     <div className="relative overflow-x-auto shadow-md sm:rounded-lg ml-20 mr-20 mt-5">
@@ -26,46 +25,36 @@ const StudentClassPage = () => {
                             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
                                     <th scope="col" className="px-6 py-3">
-                                        Student number
+                                        Subject number
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Fullname
+                                        Subject name
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Email
+                                        Number of credits
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Gender
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Date of birth
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Role
+                                        Action
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {
-                                    studentByClass.map((student, index) => (
+                                    subjects.map((subject, index) => (
                                         <tr key={index} className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200" >
                                             <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                                 {index + 1}
                                             </td>
                                             <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                {student.fullName}
+                                                {subject.name}
                                             </td>
-                                            <td className="px-6 py-4">
-                                                {student.email}
+                                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                {subject.number_of_credits}
                                             </td>
-                                            <td className="px-6 py-4">
-                                                {student.gender}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                {student.dob || 'N/A'}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                {student.role}
+                                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                <span className="p-3 bg-amber-500 rounded-2xl text-white cursor-pointer">
+                                                    <Link to={`${subject._id}/edit`} >Update subject information</Link>
+                                                </span>
                                             </td>
                                         </tr>
                                     ))
@@ -73,13 +62,14 @@ const StudentClassPage = () => {
                             </tbody>
                         </table>
                         <div className='text-lg font-medium p-3'>
-                            Totals: {studentByClass.length}
+                            Totals: {subjects.length}
                         </div>
-                    </div > : <Spinner />
+                    </div >
+                    : <Spinner />
             }
             <Pagination pagination={pagination} />
         </>
     )
 }
 
-export default StudentClassPage
+export default SubjectsPage

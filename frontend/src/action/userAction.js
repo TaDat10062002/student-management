@@ -23,7 +23,7 @@ export const getUserById = async (set, id) => {
     }
 }
 
-export const updateUser = async (set, id, data, role) => {
+export const updateUser = async (id, data, role) => {
     try {
         const res = await axiosInstance.put(`/user/${id}/update-${role}`, data)
         toast.success(res.data.message)
@@ -33,7 +33,7 @@ export const updateUser = async (set, id, data, role) => {
     }
 }
 
-export const createUser = async (set, data, user) => {
+export const createUser = async (data, user) => {
     try {
         const res = await axiosInstance.post(`/user/${user}/create`, data);
         toast.success(res.data.message);
@@ -43,7 +43,7 @@ export const createUser = async (set, data, user) => {
     }
 }
 
-export const updateAccountStatus = async (set, status, userId) => {
+export const updateAccountStatus = async (status, userId) => {
     try {
         const res = await axiosInstance.put(`user/${userId}/status-account`, { status });
     } catch (error) {

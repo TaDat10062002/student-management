@@ -10,7 +10,7 @@ const useClassStore = create((set) => ({
     isLoaded: false,
     isFetchingStudentByClass: false,
     setClassRooms: () => set({ classrooms }),
-    getAllClasses: async (page, search, item_per_page) => {
+    getAllClasses: async (search, page, item_per_page) => {
         set({ isLoaded: false })
         try {
             const res = await axiosInstance.get(`/class?search=${search}&page=${page}&item_per_page=${item_per_page}`);
@@ -34,7 +34,7 @@ const useClassStore = create((set) => ({
             set({ studentByClass: [], classroom: null, pagination: {} })
             toast.error(error.response.data.message)
         }
-    }
+    },
 }))
 
 export default useClassStore;

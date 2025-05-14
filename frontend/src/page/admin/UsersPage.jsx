@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import useDashBoardStore from '../../store/useDashBoardStore'
 import Spinner from '../../components/Spinner';
 import Pagination from '../../components/Pagination';
@@ -20,6 +20,7 @@ const UsersPage = () => {
     return (
         <>
             <Toaster reverseOrder={true} />
+            <div className='text-2xl text-center'>List of users</div>
             {
                 isLoaded ?
                     <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-5 mx-5">

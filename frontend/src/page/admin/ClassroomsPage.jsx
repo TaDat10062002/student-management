@@ -1,85 +1,77 @@
-import { useEffect } from 'react'
-import { Link, useParams, useSearchParams } from 'react-router-dom'
-import useClassStore from '../../store/useClassStore';
-import Pagination from '../../components/Pagination';
+import useDashBoardStore from '../../store/useDashBoardStore';
+import { Link, useSearchParams } from "react-router-dom";
 import Spinner from '../../components/Spinner';
-
-const StudentClassPage = () => {
-    const { id } = useParams();
-    const { studentByClass, pagination, classroom, isLoaded, getStudentByClass } = useClassStore();
+import Pagination from '../../components/Pagination';
+import { useEffect } from 'react';
+import { Toaster } from 'react-hot-toast';
+const ClassroomsPage = () => {
+    const { classrooms, pagination, getClassroomsPagination, isLoaded } = useDashBoardStore();
     const [searchParams] = useSearchParams();
     const search = searchParams.get('search') || '';
     const page = searchParams.get('page') || 1;
     const item_per_page = searchParams.get('item_per_page') || 5;
     useEffect(() => {
-        getStudentByClass(id, search, page, item_per_page);
-    }, [getStudentByClass, id, search, page, item_per_page])
-
+        getClassroomsPagination(search, page, item_per_page)
+    }, [getClassroomsPagination, search, page, item_per_page])
     return (
         <>
-            <Link to={'/class'} className='block px-3 py-3 bg-blue-500 w-fit rounded-md ml-20 mt-5'>Back to Class page</Link>
-            <div className='text-2xl text-center mt-5'>List students in Class {classroom.name}</div>
+            <Toaster reverseOrder={true} />
+            <div className='text-2xl text-center'>List of classrooms</div>
             {
                 isLoaded ?
-                    <div className="relative overflow-x-auto shadow-md sm:rounded-lg ml-20 mr-20 mt-5">
+                    <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-5 mx-5">
                         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
                                     <th scope="col" className="px-6 py-3">
-                                        Student number
+                                        Class number
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Fullname
+                                        Class name
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Email
+                                        List of students
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Gender
+                                        Amount of students
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Date of birth
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Role
+                                        Action
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {
-                                    studentByClass.map((student, index) => (
+                                    classrooms.map((classroom, index) => (
                                         <tr key={index} className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200" >
-                                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                                 {index + 1}
-                                            </td>
-                                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                {student.fullName}
+                                            </th>
+                                            <td className="px-6 py-4">
+                                                {classroom.name}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {student.email}
+                                                <Link to={`${classroom._id}/view-students`} className='p-3 bg-blue-400 text-black rounded-2xl'>View students in {classroom.name}</Link>
                                             </td>
                                             <td className="px-6 py-4">
-                                                {student.gender}
+                                                <span className='bg-green-300 text-black p-3 rounded-2xl'>
+                                                    {classroom.amount} students
+                                                </span>
                                             </td>
                                             <td className="px-6 py-4">
-                                                {student.dob || 'N/A'}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                {student.role}
+                                                <Link to={`${classroom._id}/update`} className='p-3 bg-amber-500 rounded-2xl text-white'>Update Classroom information</Link>
                                             </td>
                                         </tr>
                                     ))
                                 }
                             </tbody>
                         </table>
-                        <div className='text-lg font-medium p-3'>
-                            Totals: {studentByClass.length}
-                        </div>
-                    </div > : <Spinner />
+                    </div >
+                    : <Spinner />
             }
             <Pagination pagination={pagination} />
         </>
     )
 }
 
-export default StudentClassPage
+export default ClassroomsPage
