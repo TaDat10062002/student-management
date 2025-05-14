@@ -35,6 +35,8 @@ import PageNotFound from "../page/users/PageNotFound";
 import SubjectsPage from "../page/admin/SubjectsPage";
 import CreateSubjectPage from "../page/admin/CreateSubjectPage";
 import EditSubjectPage from "../page/admin/EditSubjectPage";
+import CoursesPage from "../page/admin/CoursesPage";
+import CreateCoursesPage from "../page/admin/CreateCoursesPage";
 
 
 export default function Router() {
@@ -77,7 +79,8 @@ export default function Router() {
                 <Route path="classrooms/:id/update" element={<EditClassroomPage />} />
                 <Route path="subjects" element={<SubjectsPage />} />
                 <Route path="subjects/create" element={<CreateSubjectPage />} />
-                <Route path="subjects/:id/edit" element={<EditSubjectPage />} />
+                <Route path="courses" element={<CoursesPage />} />
+                <Route path="courses/create" element={<CreateCoursesPage />} />
             </Route>
 
             {/* TEACHER */}

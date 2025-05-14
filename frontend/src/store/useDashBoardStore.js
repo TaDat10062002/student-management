@@ -1,9 +1,17 @@
 import { create } from "zustand";
-import { getDashBoardStatistic } from "../action/dashBoardAction";
+import { getDashBoardStatistic, getSubjects, getTeachers } from "../action/dashBoardAction";
 import { createUser, getUserById, getUsers, updateAccountStatus, updateUser } from "../action/userAction";
-import { createDepartment, getDepartmentById, getDepartments, getDepartmentsPagination, updateDepartment, updateDepartmentStatus } from "../action/departmentAction";
+import {
+    createDepartment,
+    getDepartmentById,
+    getDepartments,
+    getDepartmentsPagination,
+    updateDepartment,
+    updateDepartmentStatus
+} from "../action/departmentAction";
 import { createClass, getClassById, getClassrooms, getClassroomsPagination, updateClass } from "../action/classroomAction";
 import { createSubject, getSubjectById, updateSubject } from "../action/subjectAction";
+import { createCourse } from "../action/courseAction";
 
 
 const useDashBoardStore = create((set) => ({
@@ -13,7 +21,9 @@ const useDashBoardStore = create((set) => ({
     departments: [],
     department: {},
     classrooms: [],
+    teachers: [],
     pagination: {},
+    subjects: [],
     subject: {},
     isLoaded: false,
     getDashBoardStatistic: () => getDashBoardStatistic(set),
@@ -39,8 +49,11 @@ const useDashBoardStore = create((set) => ({
     // subject
     createSubject: (data) => createSubject(data),
     getSubjectById: (id) => getSubjectById(set, id),
-    updateSubject: (id, data) => updateSubject(id, data)
+    updateSubject: (id, data) => updateSubject(id, data),
 
+    getTeachers: () => getTeachers(set),
+    getSubjects: () => getSubjects(set),
+    createCourse: (data) => createCourse(data)
 }))
 
 export default useDashBoardStore;

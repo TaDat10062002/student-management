@@ -4,9 +4,11 @@ import Spinner from '../../components/Spinner';
 import Pagination from '../../components/Pagination';
 import { useSearchParams } from 'react-router-dom';
 import Modal from '../../components/Modal';
+import useAuthStore from '../../store/useAuthStore';
 
-const CoursePage = () => {
+const CoursesPage = () => {
     const { courses, isLoaded, studentOfCourse, pagination, getAllCourses, registerCourse, } = useCourseStore();
+    const { authUser } = useAuthStore();
     const [searchParams] = useSearchParams();
     const search = searchParams.get('search') || '';
     const page = searchParams.get('page') || 1;
@@ -63,9 +65,12 @@ const CoursePage = () => {
                                     <th scope="col" className="px-6 py-3">
                                         Realistic amount
                                     </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Register this course
-                                    </th>
+                                    {
+                                        authUser.role !== 'admin' ?
+                                            <th scope="col" className="px-6 py-3">
+                                                Register this course
+                                            </th> : ''
+                                    }
                                 </tr>
                             </thead>
                             <tbody>
@@ -93,11 +98,14 @@ const CoursePage = () => {
                                             <td className="px-6 py-4">
                                                 {studentOfCourse[course.code]}/{course.amount} students
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <button onClick={(e) => { handleModal(e), setCourseId(course.code) }} className="block bg-green-400 text-black px-3 py-3 rounded-md" type="button">
-                                                    Register course
-                                                </button>
-                                            </td>
+                                            {
+                                                authUser.role !== 'admin' ?
+                                                    <td className="px-6 py-4">
+                                                        <button onClick={(e) => { handleModal(e), setCourseId(course.code) }} className="block bg-green-400 text-black px-3 py-3 rounded-md" type="button">
+                                                            Register course
+                                                        </button>
+                                                    </td> : ''
+                                            }
                                         </tr>
                                     ))
                                 }
@@ -114,4 +122,4 @@ const CoursePage = () => {
     )
 }
 
-export default CoursePage
+export default CoursesPage

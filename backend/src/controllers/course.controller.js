@@ -33,11 +33,10 @@ export const getAllCourse = async (req, res) => {
                 }
             },
             { $unwind: '$subjectInfo' },
-
             {
                 // 1 la show 0 la hide
                 $project: {
-                    _id: 0,
+                    _id: 1,
                     code: 1,
                     amount: 1,
                     'teacherInfo.fullName': 1,
