@@ -4,6 +4,7 @@ import ClassRoom from "../models/class.model.js";
 import Subject from "../models/subject.model.js";
 import Course from "../models/course.model.js";
 import RegisteredCourse from "../models/registered_course.model.js";
+import Teacher from "../models/teacher.model.js";
 
 export const getDashBoardStatistic = async (req, res) => {
     try {
@@ -51,6 +52,30 @@ export const getClassrooms = async (req, res) => {
         res.status(200).json({ classrooms })
     } catch (error) {
         console.log(`Error getDepartments in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+export const getTeachers = async (req, res) => {
+    try {
+        const teachers = await Teacher.find().select("fullName");
+        res.status(200).json({ teachers })
+    } catch (error) {
+        console.log(`Error getTeacher in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+export const getSubjects = async (req, res) => {
+    try {
+        const subjects = await Subject.find().select("name");
+        res.status(200).json({ subjects })
+    } catch (error) {
+        console.log(`Error getTeacher in controller ${error.message}`);
         res.status(500).json({
             message: "Internal Server Error"
         })
