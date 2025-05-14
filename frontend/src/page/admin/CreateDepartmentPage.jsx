@@ -19,7 +19,7 @@ const CreateDepartmentPage = () => {
     return (
         <>
             <Toaster reverseOrder={true} />
-            <Link to={'/admin/departments'} className='p-3 bg-amber-500 w-fit m-5 rounded-md '>Back to department</Link>
+            <Link to={'/admin/departments'} className='p-3 bg-amber-500 w-fit m-5 rounded-md'>Back to department</Link>
             <form className="max-w-lg mx-auto shadow-md rounded-2xl">
                 <h1 className='text-3xl font-medium text-center mb-5'>Create department</h1>
                 <div className="relative z-0 w-100 mx-auto mb-5 group px-5 mt-5">

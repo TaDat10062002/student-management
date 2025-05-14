@@ -12,9 +12,11 @@ const Pagination = ({ pagination }) => {
         pages.push(i);
     }
 
-    if (page > totalPages && !departmentID) {
-        setSearchParams(`?page=1&item_per_page=${item_per_page}`)
-    }
+    useEffect(() => {
+        if (page > totalPages && !departmentID) {
+            setSearchParams(`?page=1&item_per_page=${item_per_page}`)
+        }
+    }, [page > totalPages && !departmentID])
 
     const check = (departmentID ? `&departmentID=${departmentID}` : '') + (role ? `&role=${role}` : '');
     return (

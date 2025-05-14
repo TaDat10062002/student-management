@@ -14,7 +14,7 @@ const DashBoardLayout = () => {
             <div className="flex-1 flex flex-col">
                 <HeaderDashBoard />
                 {
-                    parts.length === 3 && parts[2] !== 'dashboard' ? <Action /> : ''
+                    parts[2] !== 'dashboard' ? <Action /> : ''
                 }
                 <Outlet />
             </div>

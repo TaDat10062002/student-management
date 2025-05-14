@@ -9,34 +9,35 @@ import ClearFilter from './ClearFilter'
 const Action = () => {
     const pathName = useLocation().pathname;
     const parts = pathName.split('/');
-    const lastPart = parts[2]
+    const lastPart = parts[3];
+    const createPart = parts[2];
     return (
         <>
             <div className='grid grid-cols-12 mt-2'>
-                <div className='col-span-2'>
+                <div className='col-span-4'>
                     <Search />
                 </div>
                 <div className='col-span-2'>
                     <FilterByRecords />
                 </div>
-                {
-                    parts[2] === 'users' ?
-                        <>
-                            <div className='col-span-2'>
-                                <FilterByDepartment />
-                            </div>
-                            <div className='col-span-2'>
-                                <FilterByRole />
-                            </div>
-                        </> : ''
-                }
+                <div className='col-span-2'>
+                    <FilterByDepartment />
+                </div>
+                <div className='col-span-2'>
+                    <FilterByRole />
+                </div>
                 <div className='col-span-2'>
                     <ClearFilter />
                 </div>
-                <div className='col-span-2'>
-                    <Link to={`${parts[2]}/create`} className='p-3 bg-green-500 mt-5 rounded-2xl block w-fit ml-auto mr-5'>Create {lastPart}</Link>
-                </div>
             </div>
+            {
+                lastPart !== 'create' ?
+                    <div className='grid grid-cols-12 mt-2'>
+                        <div className='col-span-2'>
+                            <Link to={`${parts[2]}/create`} className='p-3 bg-green-500 mt-5 rounded-md block w-fit ml-5 mr-5'>Create {createPart}</Link>
+                        </div>
+                    </div> : ''
+            }
         </>
     )
 }

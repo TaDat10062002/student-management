@@ -8,7 +8,7 @@ const Search = () => {
         setSearchParams(`?search=${e.target.value}`)
     }
     return (
-        <form className="max-w-md ml-5 mt-5">
+        <form className="max-w-lg ml-5 mt-5">
             <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
             <div className="relative">
                 <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">

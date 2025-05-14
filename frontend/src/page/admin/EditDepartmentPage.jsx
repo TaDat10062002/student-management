@@ -18,6 +18,7 @@ const EditDepartmentPage = () => {
             })
         }
     }, [department])
+    
     const [dataForm, setDataForm] = useState({
         name: '',
         departmentType: ''

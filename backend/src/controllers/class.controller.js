@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import ClassRoom from "../models/class.model.js";
 import Student from "../models/student.model.js";
 
@@ -6,38 +7,17 @@ export const getClass = async (req, res) => {
     const page = req.query.page || 1;
     const item_per_page = req.query.item_per_page || 5;
     try {
-        const queryClassRooms = ClassRoom.find();
-        const totalDocs = (await queryClassRooms).length;
+        const filter = search ? {
+            name: {
+                $regex: search
+            }
+        } : {};
+        const queryClassrom = ClassRoom.find(filter).select("name amount");
+        const [totalDocs, classrooms] = await Promise.all([
+            ClassRoom.countDocuments(filter),
+            await queryClassrom.clone().skip((page - 1) * item_per_page).limit(item_per_page),
+        ])
         const totalPages = Math.ceil(totalDocs / item_per_page);
-        const classrooms = await queryClassRooms.clone().skip((page - 1) * item_per_page).limit(item_per_page);
-
-        if (search) {
-            const queryClassRooms = ClassRoom.find({
-                name: {
-                    $regex: search, $options: "i"
-                }
-            });
-            const totalDocs = (await queryClassRooms).length;
-            const totalPages = Math.ceil(totalDocs / item_per_page);
-            const classrooms = await queryClassRooms.clone().skip((page - 1) * item_per_page).limit(item_per_page);
-
-            return res.status(200).json({
-                classrooms,
-                pagination: {
-                    currentPage: Number(page),
-                    totalPages: totalPages,
-                    item_per_page: item_per_page,
-                    totalClasses: classrooms.length
-                }
-            })
-        }
-
-        if (page > totalDocs) {
-            return res.status(404).json({
-                message: "Page not found!!!"
-            })
-        }
-
         return res.status(200).json({
             classrooms,
             pagination: {
@@ -47,7 +27,6 @@ export const getClass = async (req, res) => {
                 totalClasses: classrooms.length
             }
         })
-
     } catch (error) {
         console.log(`Error getClass in controller ${error.message}`);
         res.status(500).json({
@@ -107,8 +86,14 @@ export const getStudentByClass = async (req, res) => {
 }
 
 export const createClass = async (req, res) => {
-    const { name } = req.body;
+    const { name, amount } = req.body;
     try {
+        if (!name || !amount) {
+            return res.status(400).json({
+                message: "All fields are required"
+            })
+        }
+
         const classRoom = await ClassRoom.findOne({ name: name });
         if (classRoom) {
             return res.status(400).json({
@@ -117,7 +102,8 @@ export const createClass = async (req, res) => {
         }
 
         const newClassRoom = new ClassRoom({
-            name
+            name,
+            amount
         });
 
         await newClassRoom.save();
@@ -127,6 +113,59 @@ export const createClass = async (req, res) => {
         })
     } catch (error) {
         console.log(`Error createClass in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+export const getClassById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const classroom = await ClassRoom.findById(id);
+        if (!classroom) {
+            return res.status(404).json({
+                message: "Class was not found!!!"
+            })
+        }
+        res.status(200).json({
+            classroom
+        })
+    } catch (error) {
+        console.log(`Error getClassById in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+export const updateClass = async (req, res) => {
+    const { id } = req.params;
+    const { name, amount } = req.body;
+    try {
+        if (!name || !amount) {
+            return res.status(400).json({
+                message: "All fields are required"
+            })
+        }
+
+        const updatedClassroom = await ClassRoom.findByIdAndUpdate(id, {
+            name,
+            amount
+        }, { new: true })
+
+        if (!updatedClassroom) {
+            return res.status(400).json({
+                message: "Can't update class information"
+            })
+        }
+
+        res.status(200).json({
+            message: "Update class info successfully",
+            updatedClassroom
+        })
+    } catch (error) {
+        console.log(`Error updateClass in controller ${error.message}`);
         res.status(500).json({
             message: "Internal Server Error"
         })

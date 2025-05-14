@@ -1,6 +1,5 @@
 import Student from "../models/student.model.js"
 
-
 export const getStudents = async (req, res) => {
     const search = req.query.search || '';
     const departmentType = req.query.departmentType || '';

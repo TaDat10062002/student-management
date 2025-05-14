@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-
 import Subject from "../models/subject.model.js";
 import Course from "../models/course.model.js";
 // subject 
@@ -73,6 +72,26 @@ export const createSubject = async (req, res) => {
     }
 }
 
+export const getSubjectById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const subject = await Subject.findById(id);
+        if (!subject) {
+            return res.status(404).json({
+                message: "Subject was not found!!!"
+            })
+        }
+        res.status(200).json({
+            subject
+        })
+    } catch (error) {
+        console.log(`Error getSubjectById in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
 export const updateSubject = async (req, res) => {
     const { id } = req.params;
     const { name, number_of_credits } = req.body;
@@ -102,33 +121,6 @@ export const updateSubject = async (req, res) => {
 
     } catch (error) {
         console.log(`Error updateSubject in controller ${error.message}`);
-        res.status(500).json({
-            message: "Internal Server Error"
-        })
-    }
-}
-
-export const deleteSubject = async (req, res) => {
-    const { id: subjectId } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(subjectId)) {
-        return res.status(400).json({
-            message: "Invalid Subject Id"
-        })
-    }
-    try {
-        const count = await Course.countDocuments({ subjectID: subjectId });
-        const subject = await Subject.findById(subjectId);
-        if (count > 0) {
-            return res.status(400).json({
-                message: `Cannot delete subject ${subject.name}, This subject is registered in ${count} courses`
-            })
-        }
-        const deletedSubject = await Subject.findByIdAndDelete(subject, { new: true });
-        res.status(200).json({
-            message: `${deletedSubject.name} subject has been deleted successfully`
-        })
-    } catch (error) {
-        console.log(`Error deleteSubject in controller ${error.message}`);
         res.status(500).json({
             message: "Internal Server Error"
         })

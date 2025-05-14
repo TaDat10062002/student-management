@@ -6,7 +6,7 @@ import Spinner from '../../components/Spinner';
 
 const StudentClassPage = () => {
     const { id } = useParams();
-    const { studentByClass, pagination, classroom, isLoaded, getStudentByClass } = useClassStore();
+    const { studentByClass, getStudentByClass, pagination, isLoaded } = useClassStore();
     const [searchParams] = useSearchParams();
     const search = searchParams.get('search') || '';
     const page = searchParams.get('page') || 1;
@@ -18,10 +18,10 @@ const StudentClassPage = () => {
     return (
         <>
             <Link to={'/class'} className='block px-3 py-3 bg-blue-500 w-fit rounded-md ml-20 mt-5'>Back to Class page</Link>
-            <div className='text-2xl text-center mt-5'>List students in Class {classroom.name}</div>
+            <div className='text-2xl text-center'>List students in Class</div>
             {
                 isLoaded ?
-                    <div className="relative overflow-x-auto shadow-md sm:rounded-lg ml-20 mr-20 mt-5">
+                    <div className="relative overflow-x-auto shadow-md sm:rounded-lg ml-20 mr-20">
                         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
