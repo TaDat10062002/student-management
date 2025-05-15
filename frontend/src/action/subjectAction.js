@@ -31,3 +31,13 @@ export const updateSubject = async (id, data) => {
         toast.error(error.response.data.message)
     }
 }
+
+export const deleteSubject = async (id) => {
+    try {
+        const res = await axiosInstance.delete(`/subject/${id}/`);
+        toast.success(res.data.message)
+    } catch (error) {
+        console.log(`Error in deleteSubject ${error}`);
+        toast.error(error.response.data.message)
+    }
+}

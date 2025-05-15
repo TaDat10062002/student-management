@@ -7,18 +7,15 @@ const useCourseStore = create((set) => ({
     course: null,
     pagination: {},
     isRegistering: false,
-    studentOfCourse: {},
     teacherCourses: [],
     students: [],
     isLoaded: false,
     setCourses: () => set({ courses }),
     getAllCourses: async (search, page, item_per_page) => {
-        set({ isLoaded: false })
         try {
             const res = await axiosInstance.get(`course?search=${search}&page=${page}&item_per_page=${item_per_page}`);
             set({ courses: res.data.courses })
-            set({ studentOfCourse: res.data.studentOfCourse }),
-                set({ pagination: res.data.pagination }),
+            set({ pagination: res.data.pagination }),
                 set({ isLoaded: true })
         } catch (error) {
             console.log(`Error in getAllCourses ${error}`);
