@@ -39,6 +39,7 @@ export const getAllCourse = async (req, res) => {
                     _id: 1,
                     code: 1,
                     amount: 1,
+                    status: 1,
                     'teacherInfo.fullName': 1,
                     'subjectInfo.name': 1,
                     'subjectInfo.number_of_credits': 1,
@@ -60,11 +61,9 @@ export const getAllCourse = async (req, res) => {
         const coursesPaginate = await Course.aggregate(paginatePipeline);
         const totalDocs = courses.length;
         const totalPages = Math.ceil(totalDocs / item_per_page);
-        const studentOfCourse = await getCourseLimit();
         // pagination later
         return res.status(200).json({
             courses: coursesPaginate,
-            studentOfCourse,
             pagination: {
                 currentPage: Number(page),
                 totalPages: totalPages,
@@ -81,20 +80,6 @@ export const getAllCourse = async (req, res) => {
     }
 }
 
-export const getCourseLimit = async () => {
-    try {
-        const courses = await Course.find().sort({ code: 1 });
-        const studentOfCourse = {};
-        for (const course of courses) {
-            const count = await RegisteredCourse.find().sort({ code: 1 }).countDocuments({ course_code: course.code });
-            studentOfCourse[course.code] = count;
-        }
-        return studentOfCourse;
-    } catch (error) {
-
-    }
-}
-
 export const createCourse = async (req, res) => {
     const { teacherID, subjectID, amount } = req.body;
     try {
@@ -107,11 +92,13 @@ export const createCourse = async (req, res) => {
                 message: "Teacher or Subject were not found!!!"
             })
         }
+
         if (!teacher && !subject) {
             return res.status(404).json({
                 message: "Teacher and Subject were not found!!!"
             })
         }
+
         const newCourse = new Course({
             code: course_code,
             teacher: teacherID,
@@ -131,16 +118,44 @@ export const createCourse = async (req, res) => {
     }
 }
 
+export const getCourseById = async (req, res) => {
+    const { id: courseId } = req.params;
+    try {
+        const course = await Course.findById(courseId)
+            .populate({
+                path: "teacher",
+                select: "fullName"
+            })
+            .populate({
+                path: "subject",
+                select: "name"
+            })
+        if (!course) {
+            return res.status(400).json({
+                message: "Department not found!!!"
+            })
+        }
+        res.status(200).json({
+            course
+        })
+    } catch (error) {
+        console.log(`Error getCourseById in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
 export const updateCourse = async (req, res) => {
     const { id: courseId } = req.params;
-    const { teacherID, subjectID, amount } = req.body;
+    const { teacher, subject, amount } = req.body;
     if (!mongoose.Types.ObjectId.isValid(courseId)) {
         return res.status(400).json({
             message: "Invalid Course ID"
         })
     }
     try {
-        const updatedCourse = await Course.findByIdAndUpdate(courseId, { teacherID, subjectID, amount }, { new: true })
+        const updatedCourse = await Course.findByIdAndUpdate(courseId, { teacher, subject, amount }, { new: true })
         res.status(200).json({
             message: "Course has been updated successfully",
             updatedCourse
@@ -154,13 +169,19 @@ export const updateCourse = async (req, res) => {
 }
 
 export const deleteCourse = async (req, res) => {
-    const { id: courseId } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(courseId)) {
-        return res.status(400).json({
-            message: "Invalid Course ID"
-        })
-    }
+    const { id: courseCode } = req.params;
     try {
+
+        const count = await RegisteredCourse.countDocuments({ course_code: courseCode })
+        if (count > 0) {
+            return res.status(400).json({
+                message: `Cannot delete this course, It has ${count} students register it`
+            })
+
+        }
+
+        const course = await Course.findOne({ code: courseCode });
+        const courseId = course._id;
         await Course.findByIdAndDelete(courseId, { new: true })
         return res.status(200).json({
             message: "This course has been deleted successfully",
@@ -347,3 +368,20 @@ export const getStudentInTeacherCourse = async (req, res) => {
         })
     }
 }
+
+export const updateCourseStatus = async (req, res) => {
+    const { id: courseId } = req.params;
+    const status = req.body;
+    try {
+        await Course.findByIdAndUpdate(courseId, status, { new: true });
+        return res.status(200).json({
+            message: "Updated in status successfully",
+        })
+    } catch (error) {
+        console.log(`Error updateCourseStatus in controller ${error.message} `);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+

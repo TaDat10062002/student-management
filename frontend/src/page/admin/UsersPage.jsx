@@ -76,7 +76,7 @@ const UsersPage = () => {
                                                 <Link to={`${user._id}/edit`} className='text-blue-500 underline'>Update user info</Link>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className={`${user.status === 'active' ? 'bg-green-500 text-black p-2 rounded-md' : 'bg-yellow-500 text-black p-2 rounded-2xl'}`}>{user.status}</span>
+                                                <span className={`${user.status === 'active' ? 'bg-green-500 text-black p-2 rounded-2xl' : 'bg-yellow-500 text-black p-2 rounded-2xl'}`}>{user.status}</span>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <label className="inline-flex items-center cursor-pointer">

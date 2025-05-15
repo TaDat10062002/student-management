@@ -16,7 +16,12 @@ const courseSchema = new mongoose.Schema({
     amount: {
         type: String,
         required: true
-    }
+    },
+    status: {
+        type: String,
+        enum: ['active', 'inactive'],
+        default: "inactive",
+    },
 }, { timestamps: true });
 
 const Course = mongoose.model("Course", courseSchema);

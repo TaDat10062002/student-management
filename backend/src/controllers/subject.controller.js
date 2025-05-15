@@ -127,3 +127,30 @@ export const updateSubject = async (req, res) => {
     }
 }
 
+export const deleteSubject = async (req, res) => {
+    const { id: subjectId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(subjectId)) {
+        return res.status(400).json({
+            message: "Invalid Course ID"
+        })
+    }
+
+    const count = await Course.countDocuments({ subject: subjectId })
+    if (count > 0) {
+        return res.status(400).json({
+            message: `You cannot delete this subject, It involved in ${count} courses`
+        })
+    }
+
+    try {
+        await Subject.findByIdAndDelete(subjectId, { new: true })
+        return res.status(200).json({
+            message: "This course has been deleted successfully",
+        })
+    } catch (error) {
+        console.log(`Error deleteCourse in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}

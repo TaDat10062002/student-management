@@ -46,6 +46,7 @@ export const createUser = async (data, user) => {
 export const updateAccountStatus = async (status, userId) => {
     try {
         const res = await axiosInstance.put(`user/${userId}/status-account`, { status });
+        toast.success(res.data.message)
     } catch (error) {
         console.log(`Error in updateAccountStatus ${error}`);
         toast.error(error.response.data.message);

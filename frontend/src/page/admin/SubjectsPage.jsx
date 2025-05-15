@@ -3,20 +3,35 @@ import useSubjectStore from '../../store/useSubjectStore'
 import Pagination from '../../components/Pagination';
 import { Link, useSearchParams } from 'react-router-dom';
 import Spinner from '../../components/Spinner';
+import Modal from '../../components/admin/Modal';
+import { useState } from 'react';
+import { Toaster } from 'react-hot-toast';
+import useDashBoardStore from '../../store/useDashBoardStore';
 
 const SubjectsPage = () => {
     const { subjects, isLoaded, pagination, getSubjects } = useSubjectStore();
+    const { deleteSubject } = useDashBoardStore();
     const [searchParams] = useSearchParams();
     const search = searchParams.get('search') || '';
     const page = searchParams.get('page') || 1;
     const item_per_page = searchParams.get('item_per_page') || 5;
+    const [isOpen, setIsOpen] = useState(false);
+    const [subjectId, setSubjectId] = useState('');
+    const handleClose = () => {
+        setIsOpen(false);
+    }
 
     useEffect(() => {
         getSubjects(search, page, item_per_page)
     }, [getSubjects, search, page, item_per_page])
 
+    const handleDelete = () => {
+        deleteSubject(subjectId)
+    }
+
     return (
         <>
+            <Toaster reverseOrder={true} />
             <div className='text-3xl text-center mt-5'>List of subjects</div>
             {
                 isLoaded ?
@@ -34,7 +49,10 @@ const SubjectsPage = () => {
                                         Number of credits
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Action
+                                        Update subject
+                                    </th>
+                                    <th>
+                                        Delete subject
                                     </th>
                                 </tr>
                             </thead>
@@ -56,6 +74,9 @@ const SubjectsPage = () => {
                                                     <Link to={`${subject._id}/edit`} >Update subject information</Link>
                                                 </span>
                                             </td>
+                                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                <button onClick={() => { setIsOpen(true), setSubjectId(subject._id) }} type='button' className='bg-red-500 p-3 rounded-2xl'>delete subject</button>
+                                            </td>
                                         </tr>
                                     ))
                                 }
@@ -67,6 +88,7 @@ const SubjectsPage = () => {
                     </div >
                     : <Spinner />
             }
+            <Modal isOpen={isOpen} handleClose={handleClose} handleDelete={handleDelete} />
             <Pagination pagination={pagination} />
         </>
     )

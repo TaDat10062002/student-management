@@ -61,9 +61,6 @@ const CoursePage = () => {
                                         Amount
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Realistic amount
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
                                         Register this course
                                     </th>
                                 </tr>
@@ -89,9 +86,6 @@ const CoursePage = () => {
                                             </td>
                                             <td className="px-6 py-4">
                                                 {course.amount} students
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                {studentOfCourse[course.code]}/{course.amount} students
                                             </td>
                                             <td className="px-6 py-4">
                                                 <button onClick={(e) => { handleModal(e), setCourseId(course.code) }} className="block bg-green-400 text-black px-3 py-3 rounded-md" type="button">

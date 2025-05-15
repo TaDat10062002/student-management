@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import ClassRoom from "../models/class.model.js";
 import Student from "../models/student.model.js";
+import Course from "../models/course.model.js";
 
 export const getClass = async (req, res) => {
     const search = req.query.search || '';
