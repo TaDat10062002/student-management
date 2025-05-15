@@ -1,4 +1,4 @@
-# 🎓 Student Management System
+# 🎓 Student Management System - Backend API NodeJS & ReactJs + Vite
 
 A full-stack web application that allows administrators, teachers, and students to manage academic data efficiently. Built using (MongoDB, Express.js, React + Vite, Node.js) with a clean and responsive **Tailwind CSS** design.
 
