@@ -31,7 +31,7 @@ const Action = () => {
                 </div>
             </div>
             {
-                lastPart !== 'create' ?
+                lastPart !== 'create' && createPart[2] === 'registered-courses' ?
                     <div className='grid grid-cols-12 mt-2'>
                         <div className='col-span-2'>
                             <Link to={`${parts[2]}/create`} className='p-3 bg-green-500 mt-5 rounded-md block w-fit ml-5 mr-5'>Create {createPart}</Link>
