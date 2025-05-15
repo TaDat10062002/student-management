@@ -27,7 +27,6 @@ import DepartmentPage from "../page/users/DepartmentPage";
 import TeacherDepartmentPage from "../page/users/TeacherDepartmentPage";
 import SubjectPage from "../page/users/SubjectPage";
 import CoursePage from "../page/users/CoursePage";
-import RegisteredCoursePage from "../page/users/RegisteredCoursePage";
 import StudentPage from "../page/users/StudentPage";
 import TeacherCoursePage from "../page/users/TeacherCoursePage";
 import StudentInTeacherCoursePage from "../page/users/StudentInTeacherCoursePage";
@@ -38,6 +37,8 @@ import EditSubjectPage from "../page/admin/EditSubjectPage";
 import CoursesPage from "../page/admin/CoursesPage";
 import CreateCoursesPage from "../page/admin/CreateCoursesPage";
 import EditCoursePage from "../page/admin/EditCoursePage";
+import RegisteredCoursePage from "../page/users/RegisteredCoursePage";
+import RegisterCoursesPage from "../page/admin/RegisterCoursesPage";
 
 
 export default function Router() {
@@ -80,9 +81,11 @@ export default function Router() {
                 <Route path="classrooms/:id/update" element={<EditClassroomPage />} />
                 <Route path="subjects" element={<SubjectsPage />} />
                 <Route path="subjects/create" element={<CreateSubjectPage />} />
+                <Route path="subjects/:id/edit" element={<EditSubjectPage />} />
                 <Route path="courses" element={<CoursesPage />} />
                 <Route path="courses/create" element={<CreateCoursesPage />} />
                 <Route path="courses/:id/edit" element={<EditCoursePage />} />
+                <Route path="registered-courses" element={<RegisterCoursesPage />} />
             </Route>
 
             {/* TEACHER */}

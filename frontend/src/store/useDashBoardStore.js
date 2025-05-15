@@ -12,6 +12,7 @@ import {
 import { createClass, getClassById, getClassrooms, getClassroomsPagination, updateClass } from "../action/classroomAction";
 import { createSubject, deleteSubject, getSubjectById, updateSubject } from "../action/subjectAction";
 import { createCourse, deleteCourse, getAllCourses, getCourseById, updateCourse, updateCourseStatus } from "../action/courseAction";
+import { getAllRegisterCourses, updateRegisterCourseStatus } from "../action/register_course";
 
 
 const useDashBoardStore = create((set) => ({
@@ -27,6 +28,7 @@ const useDashBoardStore = create((set) => ({
     subject: {},
     courses: [],
     course: {},
+    registeredCourses: [],
     isLoaded: false,
     getDashBoardStatistic: () => getDashBoardStatistic(set),
     // user
@@ -62,7 +64,11 @@ const useDashBoardStore = create((set) => ({
     getCourseById: (id) => getCourseById(set, id),
     updateCourse: (id, data) => updateCourse(id, data),
     // chua lay duoc state moi nhat sau khi xoa
-    deleteCourse: (id) => deleteCourse(id)
+    deleteCourse: (id) => deleteCourse(id),
+
+    getAllRegisterCourses: (search, page, item_per_page) => getAllRegisterCourses(set, search, page, item_per_page),
+    updateRegisterCourseStatus: (status, registeredCourseId) => updateRegisterCourseStatus(status, registeredCourseId),
+
 }))
 
 export default useDashBoardStore;

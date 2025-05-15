@@ -9,84 +9,6 @@ export const getAllRegisteredCourse = async (req, res) => {
     const page = req.query.page || 1;
     const item_per_page = req.query.item_per_page || 5;
     try {
-        if (search) {
-            // view only that student registeredCourses
-            const pipeline = [
-                {
-                    $match: { studentId: studentId }
-                },
-                // lookup course
-                {
-                    $lookup: {
-                        from: "courses",
-                        localField: "course_code",
-                        foreignField: "code",
-                        as: "courseInfo"
-                    }
-                },
-                { $unwind: '$courseInfo' },
-                // lookup teacher 
-                {
-                    $lookup: {
-                        from: "users",
-                        localField: "courseInfo.teacher",
-                        foreignField: "_id",
-                        as: "teacherInfo"
-                    }
-                },
-                { $unwind: '$teacherInfo' },
-                // lookup subject 
-                {
-                    $lookup: {
-                        from: "subjects",
-                        localField: "courseInfo.subject",
-                        foreignField: "_id",
-                        as: "subjectInfo"
-                    }
-                },
-                { $unwind: '$subjectInfo' },
-                {
-                    $project: {
-                        "courseInfo.code": 1,
-                        "courseInfo.amount": 1,
-                        "teacherInfo.fullName": 1,
-                        "teacherInfo.email": 1,
-                        "subjectInfo.name": 1,
-                        "subjectInfo.number_of_credits": 1,
-                        _id: 1,
-                        status: 1,
-                        score: 1,
-                    }
-                },
-                { $sort: { "courseInfo.code": 1 } },
-                {
-                    $match: {
-                        $or: [
-                            { "teacherInfo.fullName": { $regex: search, $options: "i" } },
-                            { "subjectInfo.name": { $regex: search, $options: "i" } },
-                        ]
-                    }
-                }
-            ]
-            const registeredCourses = await RegisteredCourse.aggregate(pipeline);
-            const totalDocs = registeredCourses.length;
-            const totalPages = Math.ceil(totalDocs / item_per_page);
-            const paginatePipeline = [...pipeline];
-            paginatePipeline.push(
-                { $skip: (page - 1) * item_per_page },
-                { $limit: Number(item_per_page) })
-            const registeredCoursePaginate = await RegisteredCourse.aggregate(paginatePipeline);
-
-            return res.status(200).json({
-                registeredCourses: registeredCoursePaginate,
-                pagination: {
-                    currentPage: Number(page),
-                    totalPages: totalPages,
-                    item_per_page: Number(item_per_page),
-                    totalRegisteredCourse: registeredCoursePaginate.length
-                }
-            })
-        }
         // view only that student registeredCourses
         const pipeline = [
             {
@@ -135,7 +57,15 @@ export const getAllRegisteredCourse = async (req, res) => {
                     score: 1,
                 }
             },
-            { $sort: { "courseInfo.code": 1 } }
+            { $sort: { "courseInfo.code": 1 } },
+            {
+                $match: {
+                    $or: [
+                        { "teacherInfo.fullName": { $regex: search, $options: "i" } },
+                        { "subjectInfo.name": { $regex: search, $options: "i" } },
+                    ]
+                }
+            }
         ]
         const registeredCourses = await RegisteredCourse.aggregate(pipeline);
         const paginatePipeline = [...pipeline];
@@ -276,6 +206,22 @@ export const cancelRegisteredCourse = async (req, res) => {
         })
     } catch (error) {
         console.log(`Error cancelRegisteredCourse in controller ${error.message}`);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+export const updateRegisterCourseStatus = async (req, res) => {
+    const { id: registeredCourseId } = req.params;
+    const status = req.body;
+    try {
+        await RegisteredCourse.findByIdAndUpdate(registeredCourseId, status, { new: true });
+        return res.status(200).json({
+            message: "Updated in status successfully",
+        })
+    } catch (error) {
+        console.log(`Error updateRegisterCourseStatus in controller ${error.message} `);
         res.status(500).json({
             message: "Internal Server Error"
         })
